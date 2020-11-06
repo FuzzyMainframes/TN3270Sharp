@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30626.31
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TN3270Sharp.Example.App", "TN3270Sharp.Example.App\TN3270Sharp.Example.App.csproj", "{BB939281-3F94-49C8-BAD1-1EA8CBE961D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TN3270Sharp", "TN3270Sharp\TN3270Sharp.csproj", "{D154A908-A773-4E03-8CAC-26E403B5A838}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB939281-3F94-49C8-BAD1-1EA8CBE961D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB939281-3F94-49C8-BAD1-1EA8CBE961D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB939281-3F94-49C8-BAD1-1EA8CBE961D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB939281-3F94-49C8-BAD1-1EA8CBE961D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D154A908-A773-4E03-8CAC-26E403B5A838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D154A908-A773-4E03-8CAC-26E403B5A838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D154A908-A773-4E03-8CAC-26E403B5A838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D154A908-A773-4E03-8CAC-26E403B5A838}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4F2437D-201A-47A6-96C3-C62EF4A34784}
+	EndGlobalSection
+EndGlobal
