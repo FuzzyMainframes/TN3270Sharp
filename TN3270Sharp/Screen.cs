@@ -22,9 +22,15 @@ namespace TN3270Sharp
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // GetPosition translates row and col to buffer address control characters.
         public void Show(NetworkStream stream)
-        { 
+        {
+            DataStream.EraseWrite(stream);
+            stream.Write(new byte[] {
+                    (byte)ControlChars.WCCdefault });
+
             foreach (Field fld in Fields)
             {
+                
+
                 // tell the terminal where to draw field
                 DataStream.SBA(stream, fld.Row, fld.Column);
                 stream.Write(BuildField(fld));
@@ -42,7 +48,7 @@ namespace TN3270Sharp
             DataStream.SBA(stream, 1, 1);
             DataStream.IC(stream);
 
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.EOR });
+            stream.Write(new byte[] { TelnetCommands.IAC, 0xef });
 
         }
 
