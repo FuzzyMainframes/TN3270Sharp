@@ -55,7 +55,7 @@ namespace TN3270Sharp.Example.App
                 new Field() {Row = 6, Column = 20, Name="lname", Write=true, Highlighting=Highlight.Underscore},
                 new Field() {Row = 6, Column = 41 }, // "EOF"
                 new Field() {Row = 7, Column = 1, Contents="Password  . . . ."},
-                new Field() {Row = 7, Column = 20, Name="password", Write=true, Highlighting=Highlight.Underscore},
+                new Field() {Row = 7, Column = 20, Name="password", Write=true, Highlighting=Highlight.Underscore, Hidden=true },
                 new Field() {Row = 7, Column = 41}, // "EOF"
                 new Field() {Row = 9, Column = 1, Contents="Press"},
                 new Field() {Row = 9, Column = 7, Contents="ENTER", Intensity=true},

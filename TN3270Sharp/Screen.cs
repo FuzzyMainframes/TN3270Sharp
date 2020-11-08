@@ -12,6 +12,10 @@ namespace TN3270Sharp
         public string Name { get; set; }
         public List<Field> Fields { get; set; }
 
+        // Initially adapted from https://github.com/racingmars/go3270/blob/master/screen.go
+        // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
+        // GetPosition translates row and col to buffer address control characters.
+        // Borrowed from racingmars/go3270
         public void Show(NetworkStream stream)
         { 
             foreach (Field fld in Fields)
@@ -38,6 +42,12 @@ namespace TN3270Sharp
         }
 
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
+        // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
+        // GetPosition translates row and col to buffer address control characters.
+        // Borrowed from racingmars/go3270
+        //
+        // C#-ification and further changes are Copyright 20200 by Robert J. Lawrence (roblthegreat)
+        // licened under the MIT license.
         byte[] BuildField(Field fld)
         {
             List<byte> buffer = new List<byte>();
