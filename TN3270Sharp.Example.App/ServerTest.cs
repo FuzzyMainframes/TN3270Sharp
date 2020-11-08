@@ -1,4 +1,9 @@
-﻿using System;
+﻿// This file is part of https://github.com/roblthegreat/TN3270Sharp
+// Copyright 2020 by Robert J. Lawrence (roblthegreat), licensed under the MIT license. See
+// LICENSE in the project root for license information.
+//
+//  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -91,6 +96,8 @@ namespace TN3270Sharp.Example.App
                     Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));
                     Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytes, 1, 2));
 
+                    
+                    // FIXME -- CLEAN UP AND REFACTOR
                     Response response = new Response();
 
                     response.ActionID = (AID)bytes[0];
@@ -117,11 +124,8 @@ namespace TN3270Sharp.Example.App
                         x++;
                     }
                     thelist.Add(temp.ToArray());
+                    // END-FIXME -- CLEAN UP AND REFACTOR
 
-                    string str = "Hey Device!";
-                    Byte[] reply = System.Text.Encoding.ASCII.GetBytes(str);
-                    //stream.Write(reply, 0, reply.Length);
-                    Console.WriteLine("{1}: Sent: {0}", str, Thread.CurrentThread.ManagedThreadId);
                 }
             }
             catch (Exception e)
@@ -130,7 +134,6 @@ namespace TN3270Sharp.Example.App
                 client.Close();
             }
         }
-
 
         // NegotiateTelnet will naively (e.g. not checking client responses) negotiate
         // the options necessary for tn3270 on a new telnet connection.

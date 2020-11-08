@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file is part of https://github.com/roblthegreat/TN3270Sharp
+// Copyright 2020 by Robert J. Lawrence (roblthegreat), licensed under the MIT license. See
+// LICENSE in the project root for license information.
+//
+//  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Sockets;
@@ -15,7 +21,6 @@ namespace TN3270Sharp
         // Initially adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // GetPosition translates row and col to buffer address control characters.
-        // Borrowed from racingmars/go3270
         public void Show(NetworkStream stream)
         { 
             foreach (Field fld in Fields)
@@ -98,8 +103,5 @@ namespace TN3270Sharp
             }
             return buffer.ToArray();
         }
-
-    
     }
-
 }
