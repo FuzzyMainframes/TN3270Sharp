@@ -1,4 +1,4 @@
-# TN3270Sharp
+# TN3270Sharp - 3270 Server Library for DotNetCore / C#
  a .net library to write applications/servers with C# that use TN3270 clients
 
 ## Inspiration
@@ -12,7 +12,6 @@ I have borrowed / adapted some code from [racingmars/go3270](https://github.com/
 
 ## Status
 This project is still very early in development and is not suitable for use any project beyond experimentation. There is most certainly bugs and missing features.  The API will also likely change many times before it is declared ready for any realworld use.
-
 
 ## Requirements
 This will run on any machine support by Microsoft dotnetcore 3.1+.
