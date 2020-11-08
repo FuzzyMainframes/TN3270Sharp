@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TN3270Sharp
 {
-    class Field
+    public class Field
     {
         // Row (on the screen) where the field attribute character begins. integer between 1 and 24
         public int Row { get; set; }
@@ -26,7 +26,7 @@ namespace TN3270Sharp
         public bool Hidden { get; set; }
 
         // Color is the field color. The default value is the default color.
-        public byte Color { get; set; }
+        public Colors Color { get; set; }
         
         // Highlighting is the highlight attribute for the field. The default value
         // is the default (i.e. no) highlighting.

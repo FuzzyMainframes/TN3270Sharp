@@ -53,4 +53,18 @@ namespace TN3270Sharp
 		PA3 = 0x6B,
 		Clear = 0x6D
 	}
+	[Flags]
+	enum AttribChar
+	{
+		Protected   = 0b00100000,
+		Unprotected = 0b00000000,
+		Numeric     = 0b00010000,
+		Alpha       = 0b00000000,
+		Normal      = 0b00000000,
+		Intensity   = 0b00001000,
+		Hidden      = 0b00001100,
+		MDT         = 0b000000001
+	}
+
+
 }

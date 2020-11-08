@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using static TN3270Sharp.ebcdic;
 
-
 namespace TN3270Sharp.Example.App
 {
     class ServerTest
@@ -43,6 +42,29 @@ namespace TN3270Sharp.Example.App
 
         public void HandleDeivce(Object obj)
         {
+
+            Screen FirstScreen = new Screen();
+            FirstScreen.Fields = new List<Field>()
+            {
+                new Field() {Row = 1, Column = 28, Contents = "3270 Example Application", Intensity=true},
+                new Field() {Row = 3, Column = 1, Contents = "Welcome to the TN3270Sharp example application. Please enter your name."},
+                new Field() {Row = 5, Column = 1, Contents = "First Name  . . ."},
+                new Field() {Row = 5, Column = 20, Name="fname", Write=true, Highlighting=Highlight.Underscore},
+                new Field() {Row = 5, Column = 41}, // "EOF
+                new Field() {Row = 6, Column = 1, Contents = "Last Name . . . ."},
+                new Field() {Row = 6, Column = 20, Name="lname", Write=true, Highlighting=Highlight.Underscore},
+                new Field() {Row = 6, Column = 41 }, // "EOF"
+                new Field() {Row = 7, Column = 1, Contents="Password  . . . ."},
+                new Field() {Row = 7, Column = 20, Name="password", Write=true, Highlighting=Highlight.Underscore},
+                new Field() {Row = 7, Column = 41}, // "EOF"
+                new Field() {Row = 9, Column = 1, Contents="Press"},
+                new Field() {Row = 9, Column = 7, Contents="ENTER", Intensity=true},
+                new Field() {Row = 9, Column = 13, Contents="to submut your name."},
+                new Field() {Row = 11, Column = 1, Intensity = true, Color = Colors.Red, Name="errormsg"},
+                new Field() {Row = 23, Column = 1, Contents="PF3 Exit"}
+            };
+
+
             TcpClient client = (TcpClient)obj;
             NetworkStream stream = client.GetStream();
 
@@ -57,62 +79,8 @@ namespace TN3270Sharp.Example.App
                 DataStream.EraseWrite(stream);
                 stream.Write(new byte[] {
                     (byte)ControlChars.WCCdefault });
-                DataStream.SBA(stream, 1, 28);
-                DataStream.SF(stream, 0xe8);
-                
-                stream.Write(ASCIItoEBCDIC("3270 Example Application"));
-                DataStream.SBA(stream, 3, 1);
-                DataStream.SF(stream, 0x60);
 
-                stream.Write(ASCIItoEBCDIC("Welcome to the TN3270Sharp example application. Please enter your name."));
-                DataStream.SBA(stream, 5, 1);
-                DataStream.SF(stream, 0x60); 
-
-                stream.Write(ASCIItoEBCDIC("First Name  . . ."));
-                DataStream.SBA(stream, 5, 20);
-                DataStream.SFE(stream, 0x02, 0xc0, 0xc1, 0x41, 0xf4);
-                DataStream.SBA(stream, 5, 41);
-                DataStream.SF(stream, 0x60);
-
-                DataStream.SBA(stream, 6,1);
-                DataStream.SF(stream, 0x60);
-                stream.Write(ASCIItoEBCDIC("Last Name . . . ."));
-                DataStream.SBA(stream, 6, 20);
-                DataStream.SFE(stream, 0x02, 0xc0, 0xc1, 0x41, 0xf4);
-                DataStream.SBA(stream, 6, 41);
-                DataStream.SF(stream, 0x60);
-
-                DataStream.SBA(stream, 7, 1);
-                DataStream.SF(stream, 0x60);
-                stream.Write(ASCIItoEBCDIC("Password  . . . ."));
-                DataStream.SBA(stream, 7, 20);
-                DataStream.SF(stream, 0x4d);
-                DataStream.SBA(stream, 7, 41);
-                DataStream.SF(stream, 0x60);
-
-                DataStream.SBA(stream, 9, 1);
-                DataStream.SF(stream, 0x60);
-                stream.Write(ASCIItoEBCDIC("Press"));
-                DataStream.SBA(stream, 9,7);
-                DataStream.SF(stream, 0xe8);
-                stream.Write(ASCIItoEBCDIC("enter"));
-                DataStream.SBA(stream, 9,13);
-                DataStream.SF(stream, 0x60);
-                stream.Write(ASCIItoEBCDIC("to submit your name."));
-                
-                DataStream.SBA(stream, 11, 1);
-                DataStream.SFE(stream, 0x02, 0xc0, 0xe8, 0x42, 0xf2);
-                
-                DataStream.SBA(stream, 23, 1);
-                DataStream.SF(stream, 0x60);
-                stream.Write(ASCIItoEBCDIC("PF3 Exit"));
-
-                DataStream.SBA(stream, 5, 21);
-                DataStream.IC(stream);
-
-                stream.Write(new byte[] { 
-                    0xff, 0xef });
-
+                FirstScreen.Show(stream);
 
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
@@ -120,8 +88,35 @@ namespace TN3270Sharp.Example.App
                     data = Encoding.ASCII.GetString(bytes, 0, i);
                     Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
                     AID recvdAID = (AID)bytes[0];
-                    Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"),recvdAID.ToString("d") );
+                    Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));
                     Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytes, 1, 2));
+
+                    Response response = new Response();
+
+                    response.ActionID = (AID)bytes[0];
+
+                    response.Cursor[0] = bytes[1];
+                    response.Cursor[1] = bytes[2];
+
+
+                    int x = 0;
+                    List<byte> temp = new List<byte>();
+                    List<byte[]> thelist = new List<byte[]>();
+
+                    while (bytes[x] != 0xff)
+                    {
+                        if (bytes[x] != 0x11)
+                        {
+                            temp.Add(bytes[x]);
+                        }
+                        else
+                        {
+                            thelist.Add(temp.ToArray());
+                            temp = new List<byte>();
+                        }
+                        x++;
+                    }
+                    thelist.Add(temp.ToArray());
 
                     string str = "Hey Device!";
                     Byte[] reply = System.Text.Encoding.ASCII.GetBytes(str);
@@ -144,11 +139,11 @@ namespace TN3270Sharp.Example.App
             // Telnet Negotiation
 
             // Term Type
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE }); 
+            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE });
             var x = stream.Read(bytes, 0, bytes.Length);
 
             // Term Type Sub-options
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, 
+            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01,
                 TelnetCommands.IAC, TelnetCommands.SE });
             x = stream.Read(bytes, 0, bytes.Length);
 
@@ -161,7 +156,7 @@ namespace TN3270Sharp.Example.App
             x = stream.Read(bytes, 0, bytes.Length);
 
             // WILL binary, eor
-            stream.Write(new Byte[] { TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, 
+            stream.Write(new Byte[] { TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR,
                 TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY });
             x = stream.Read(bytes, 0, bytes.Length);
         }
