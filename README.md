@@ -11,7 +11,9 @@ TN3270Sharp is licensed under the MIT License which permits commercial use; modi
 I have borrowed / adapted some code from [racingmars/go3270](https://github.com/racingmars/go3270) and [Open3270/Open3270](https://github.com/Open3270/Open3270), both of which are also released under the MIT License.
 
 ## Status
-This project is still very early in development and is not suitable for use any project beyond experimentation. There is most certainly bugs and missing features.  The API will also likely change many times before it is declared ready for any realworld use.
+This project is still very early in development and is **not suitable** for use any project beyond experimentation. There is most certainly bugs and missing features.  The API will also likely change many times before it is declared ready for any realworld use.
+
+***THIS CODE IS UNSTABLE. USE AT YOUR OWN RISK.***
 
 ## Requirements
 This will run on any machine support by Microsoft dotnetcore 3.1+.
