@@ -4,11 +4,8 @@ using System.Text;
 
 namespace TN3270Sharp
 {
-
     public static class ebcdic
     {
-
-
         public static byte[] ASCIItoEBCDIC(string asciiString)
         {
             byte[] asciiToEbcdicTable = new byte[256] {
@@ -38,9 +35,6 @@ namespace TN3270Sharp
             }
             return ebcdicBinary;
         }
-
-
-
 
         public static byte[] EBCDICtoASCII(string ebcdicString)
         {
