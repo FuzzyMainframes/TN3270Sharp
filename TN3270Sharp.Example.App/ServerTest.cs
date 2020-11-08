@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using static TN3270Sharp.ebcdic;
-using TN3270Sharp;
+
 
 namespace TN3270Sharp.Example.App
 {
@@ -44,8 +44,7 @@ namespace TN3270Sharp.Example.App
         public void HandleDeivce(Object obj)
         {
             TcpClient client = (TcpClient)obj;
-            var stream = client.GetStream();
-            //string imei = String.Empty;
+            NetworkStream stream = client.GetStream();
 
             string data = null;
             Byte[] bytes = new Byte[256];
@@ -55,64 +54,63 @@ namespace TN3270Sharp.Example.App
             int i;
             try
             {
+                DataStream.EraseWrite(stream);
                 stream.Write(new byte[] {
-                    ControlChars.EraseWrite,
-                    ControlChars.WCCdefault,
-                    ControlChars.SBA, 0x40, 0x5b,
-                    ControlChars.SF, 0xe8});
-
+                    (byte)ControlChars.WCCdefault });
+                DataStream.SBA(stream, 1, 28);
+                DataStream.SF(stream, 0xe8);
+                
                 stream.Write(ASCIItoEBCDIC("3270 Example Application"));
+                DataStream.SBA(stream, 3, 1);
+                DataStream.SF(stream, 0x60);
 
-                stream.Write(new byte[] {ControlChars.SBA, 0xc2, 0x60,
-                    ControlChars.SF, 0x60});
                 stream.Write(ASCIItoEBCDIC("Welcome to the TN3270Sharp example application. Please enter your name."));
+                DataStream.SBA(stream, 5, 1);
+                DataStream.SF(stream, 0x60); 
 
-                stream.Write(new byte[] {ControlChars.SBA, 0xc5, 0x40,
-                    ControlChars.SF, 0x60});
                 stream.Write(ASCIItoEBCDIC("First Name  . . ."));
+                DataStream.SBA(stream, 5, 20);
+                DataStream.SFE(stream, 0x02, 0xc0, 0xc1, 0x41, 0xf4);
+                DataStream.SBA(stream, 5, 41);
+                DataStream.SF(stream, 0x60);
 
-                stream.Write(new byte[] {ControlChars.SBA, 0xc5, 0xd3, 
-                    ControlChars.SFE, 0x02, 0xc0, 0xc1, 0x41, 0xf4, 
-                    ControlChars.SBA, 0xc5, 0xe8, 
-                    ControlChars.SF, 0x60, 
-                    ControlChars.SBA, 0xc6, 0x50, 
-                    ControlChars.SF, 0x60});
+                DataStream.SBA(stream, 6,1);
+                DataStream.SF(stream, 0x60);
                 stream.Write(ASCIItoEBCDIC("Last Name . . . ."));
+                DataStream.SBA(stream, 6, 20);
+                DataStream.SFE(stream, 0x02, 0xc0, 0xc1, 0x41, 0xf4);
+                DataStream.SBA(stream, 6, 41);
+                DataStream.SF(stream, 0x60);
 
-                stream.Write(new byte[] {
-                    ControlChars.SBA, 0xc6, 0xe3, 
-                    ControlChars.SFE, 0x02, 0xc0, 0xc1, 0x41, 0xf4, 
-                    ControlChars.SBA, 0xc6, 0xf8, 
-                    ControlChars.SF, 0x60, 
-                    ControlChars.SBA, 0xc7, 0x60, 
-                    ControlChars.SF, 0x60});
-                stream.Write(ASCIItoEBCDIC("Password . . . ."));
+                DataStream.SBA(stream, 7, 1);
+                DataStream.SF(stream, 0x60);
+                stream.Write(ASCIItoEBCDIC("Password  . . . ."));
+                DataStream.SBA(stream, 7, 20);
+                DataStream.SF(stream, 0x4d);
+                DataStream.SBA(stream, 7, 41);
+                DataStream.SF(stream, 0x60);
 
-                stream.Write(new byte[] {
-                    ControlChars.SBA, 0xc7, 0xf3, 
-                    ControlChars.SF, 0x4d, 
-                    ControlChars.SBA, 0xc8, 0xc8, 
-                    ControlChars.SF, 0x60, 
-                    ControlChars.SBA, 0x4a, 0x40, 
-                    ControlChars.SF, 0x60, 
-                    0xd7, 0x99, 0x85, 0xa2, 0xa2, 
-                    ControlChars.SBA, 0x4a, 0xc6, 
-                    ControlChars.SF, 0xe8, 
-                    0x85, 0x95, 0xa3, 0x85, 0x99, 
-                    ControlChars.SBA, 0x4a, 0x4c, 
-                    ControlChars.SF, 0x60});
-                stream.Write(ASCIItoEBCDIC("Press enter to submit your name."));
-
-                stream.Write(new byte[] {
-                    ControlChars.SBA, 0x4c, 0x60, 
-                    ControlChars.SFE, 0x02, 0xc0, 0xe8, 0x42, 0xf2, 
-                    ControlChars.SBA, 0x5b, 0x60, 
-                    ControlChars.SF, 0x60});
+                DataStream.SBA(stream, 9, 1);
+                DataStream.SF(stream, 0x60);
+                stream.Write(ASCIItoEBCDIC("Press"));
+                DataStream.SBA(stream, 9,7);
+                DataStream.SF(stream, 0xe8);
+                stream.Write(ASCIItoEBCDIC("enter"));
+                DataStream.SBA(stream, 9,13);
+                DataStream.SF(stream, 0x60);
+                stream.Write(ASCIItoEBCDIC("to submit your name."));
+                
+                DataStream.SBA(stream, 11, 1);
+                DataStream.SFE(stream, 0x02, 0xc0, 0xe8, 0x42, 0xf2);
+                
+                DataStream.SBA(stream, 23, 1);
+                DataStream.SF(stream, 0x60);
                 stream.Write(ASCIItoEBCDIC("PF3 Exit"));
 
-                stream.Write(new byte[] {
-                    ControlChars.SBA, 0xc5, 0xd4, 
-                    ControlChars.IC, 
+                DataStream.SBA(stream, 5, 21);
+                DataStream.IC(stream);
+
+                stream.Write(new byte[] { 
                     0xff, 0xef });
 
 
@@ -120,7 +118,10 @@ namespace TN3270Sharp.Example.App
                 {
                     string hex = BitConverter.ToString(bytes);
                     data = Encoding.ASCII.GetString(bytes, 0, i);
-                    Console.WriteLine("{1}: Received: {0}", Encoding.ASCII.GetString(EBCDICtoASCII(data)), Thread.CurrentThread.ManagedThreadId);
+                    Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
+                    AID recvdAID = (AID)bytes[0];
+                    Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"),recvdAID.ToString("d") );
+                    Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytes, 1, 2));
 
                     string str = "Hey Device!";
                     Byte[] reply = System.Text.Encoding.ASCII.GetBytes(str);
@@ -134,12 +135,6 @@ namespace TN3270Sharp.Example.App
                 client.Close();
             }
         }
-
-
-
-
-
-
 
 
         // NegotiateTelnet will naively (e.g. not checking client responses) negotiate

@@ -7,7 +7,6 @@ namespace TN3270Sharp
     public static class Utils
 
     {
-
         // Adapted from https://github.com/racingmars/go3270/blob/master/util.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license. 
         // codes are the 3270 control character I/O codes, pre-computed as provided
@@ -41,7 +40,6 @@ namespace TN3270Sharp
     -1, -1, -1, -1};
 
 
-
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // GetPosition translates row and col to buffer address control characters.
@@ -49,7 +47,7 @@ namespace TN3270Sharp
         public static byte[] GetPosition(int row, int col)
         {
             byte[] result = new byte[2];
-            int address = row * 80 + col;
+            int address = (row-1) * 80 + (col-1);
             int hi = (address & 0xfc0) >> 6;
             int lo = address & 0x3f;
             result[0] = IOCodes[hi];

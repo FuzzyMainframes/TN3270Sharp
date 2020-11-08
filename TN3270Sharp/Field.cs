@@ -6,10 +6,10 @@ namespace TN3270Sharp
 {
     class Field
     {
-        // Row (on the screen) where the field attribute character begins. 0-based integer between 0 and 23
+        // Row (on the screen) where the field attribute character begins. integer between 1 and 24
         public int Row { get; set; }
 
-        // Column (on the screen) where the field attribute character begins. 0-based integer between 0 and 79
+        // Column (on the screen) where the field attribute character begins.  integer between 1 and 80
         public int Column { get; set; }
 
         // The text value to display on the screen
@@ -39,18 +39,19 @@ namespace TN3270Sharp
     }
 
     // Constants for valid field colors
-    public static class Color
+    public enum Colors
     {
-        public const byte DefaultColor  = 0;
-        public const byte Blue          = 0xf1;
-        public const byte Red           = 0xf2;
-        public const byte Pink          = 0xf3;
-        public const byte Green         = 0xf4;
-        public const byte Turquoise     = 0xf5;
-        public const byte Yellow        = 0xf6;
-        public const byte White         = 0xf7;
-
+        DefaultColor = 0,
+        Blue = 0xf1,
+        Red = 0xf2,
+        Pink = 0xf3,
+        Green = 0xf4,
+        Turquoise = 0xf5,
+        Yellow = 0xf6,
+        White = 0xf7
     }
+
+
 
     // Constants for field highlighting
     public static class Highlight
