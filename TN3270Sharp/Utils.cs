@@ -19,7 +19,6 @@ namespace TN3270Sharp
     0xf9, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f};
 
 
-
         // Adapted from https://github.com/racingmars/go3270/blob/master/util.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // decodes is the inverse of the above table; -1 is used in invalid positions
