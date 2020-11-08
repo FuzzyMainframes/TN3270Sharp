@@ -11,6 +11,4 @@ namespace TN3270Sharp
     
     }
 
-    
-
 }
