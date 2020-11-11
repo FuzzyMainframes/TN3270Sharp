@@ -42,7 +42,18 @@ namespace TN3270Sharp
         // data. All writeable fields on a screen must have a unique name.
         public string Name { get; set; }
 
+        public Field()
+        {
+
+        }
+
+        public Field(int row, int col)
+        {
+            this.Row = row;
+            this.Column = col;
+        }
     }
+
 
     // Constants for valid field colors
     public enum Colors

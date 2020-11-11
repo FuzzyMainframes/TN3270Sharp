@@ -21,7 +21,7 @@ namespace TN3270Sharp
         // Initially adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // GetPosition translates row and col to buffer address control characters.
-        public void Show(NetworkStream stream)
+        public void Show(NetworkStream stream, int row, int col)
         {
             DataStream.EraseWrite(stream);
             stream.Write(new byte[] {
@@ -45,11 +45,16 @@ namespace TN3270Sharp
                 if (content != null && content.Length > 0 )
                     stream.Write(ebcdic.ASCIItoEBCDIC(content));
             }
-            DataStream.SBA(stream, 1, 1);
+            DataStream.SBA(stream, row, col);
             DataStream.IC(stream);
 
             stream.Write(new byte[] { TelnetCommands.IAC, 0xef });
 
+        }
+
+        public void Show(NetworkStream stream)
+        {
+            this.Show(stream, 1, 1);
         }
 
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
