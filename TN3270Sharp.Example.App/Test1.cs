@@ -55,10 +55,31 @@ namespace TN3270Sharp.Example.App
                         {
                             var fName = screens[ProgramScreen.FormScreen].GetFieldData("fname");
                             var lName = screens[ProgramScreen.FormScreen].GetFieldData("lname");
+                            var password = screens[ProgramScreen.FormScreen].GetFieldData("password");
 
-                            screens[ProgramScreen.FormScreenInside].SetFieldValue("fname", fName);
-                            screens[ProgramScreen.FormScreenInside].SetFieldValue("lname", lName);
-                            tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreenInside], true, formScreenInsideAction);
+                            // Check for errors...
+                            string errorMessage = null;
+                            if (String.IsNullOrEmpty(fName))
+                                errorMessage = "First Name field is required.";  
+                            else if (String.IsNullOrEmpty(lName))
+                                errorMessage = "Last Name field is required.";
+                            else if (String.IsNullOrEmpty(password))
+                                errorMessage = "Password field is required.";
+
+                            if(!String.IsNullOrEmpty(password) && password.Trim().ToUpper() != "ADMIN")
+                                errorMessage = "Invalid password.";
+
+                            if (!String.IsNullOrEmpty(errorMessage))
+                            {
+                                screens[ProgramScreen.FormScreen].SetFieldValue("errormsg", errorMessage);
+                                tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, formScreenAction);
+                            }
+                            else
+                            {
+                                screens[ProgramScreen.FormScreenInside].SetFieldValue("fname", fName);
+                                screens[ProgramScreen.FormScreenInside].SetFieldValue("lname", lName);
+                                tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreenInside], true, formScreenInsideAction);
+                            }
                         }
                     };
 
@@ -70,6 +91,8 @@ namespace TN3270Sharp.Example.App
                                 () => {
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("fname");
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("lname");
+                                    screens[ProgramScreen.FormScreen].ClearFieldValue("password");
+                                    screens[ProgramScreen.FormScreen].ClearFieldValue("errormsg");
                                 },
                                 formScreenAction);
                         };
