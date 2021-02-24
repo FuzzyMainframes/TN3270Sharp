@@ -32,7 +32,7 @@ namespace TN3270Sharp
             Ebcdic.SetEbcdicEncoding(defaultEbcdicEncoding);
         }
 
-        public void StartListener(Func<bool> breakCondition, Action whenHasNewConnection, Action<ITn3270ConnectionHandler> handleConnectionAction)
+        public void StartListener(Func<bool> breakCondition, Action whenHasNewConnection, Action whenConnectionIsClosed, Action<ITn3270ConnectionHandler> handleConnectionAction)
         {
             var server = new TcpListener(IPAddress.Parse(IpAddress), Port);
             server.Start();
@@ -49,6 +49,8 @@ namespace TN3270Sharp
                         tn3270ConnectionHandler.NegotiateTelnet();
                         handleConnectionAction(tn3270ConnectionHandler);
                     }
+
+                    whenConnectionIsClosed();
                 }).Start();
             }
 

@@ -116,6 +116,15 @@ namespace TN3270Sharp
             return buffer.ToArray();
         }
 
+        public string GetFieldData(string fieldName)
+        {
+            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
+            if (field == null)
+                return null;
+
+            return field.Contents;
+        }
+
         public void SetFieldValue(int row, int col, string data)
         {
             var field = Fields.Where(x => x.Row == row && x.Column == col).FirstOrDefault();
@@ -123,6 +132,24 @@ namespace TN3270Sharp
                 return;
 
             field.Contents = data;
+        }
+
+        public void SetFieldValue(string fieldName, string fieldData)
+        {
+            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
+            if (field == null)
+                return;
+
+            field.Contents = fieldData;
+        }
+
+        public void ClearFieldValue(string fieldName)
+        {
+            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
+            if (field == null)
+                return;
+
+            field.Contents = "";
         }
     }
 }

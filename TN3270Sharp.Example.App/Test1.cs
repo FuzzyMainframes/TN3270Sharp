@@ -11,6 +11,7 @@ namespace TN3270Sharp.Example.App
         private enum ProgramScreen : int
         {
             FormScreen = 0,
+            FormScreenInside = 1,
             TitleScreen = 2,
             ColorScreen = 3,
             HighlightScreen = 4 
@@ -35,26 +36,73 @@ namespace TN3270Sharp.Example.App
             tn3270Server.StartListener(
                 closeServerFunction,
                 () => {
-
+                    ConsoleColor.Green.WriteLine("New connection...");
+                },
+                () => {
+                    ConsoleColor.Yellow.WriteLine("Closed connection...");
                 },
                 (tn3270ConnectionHandler) =>
                 {
                     Dictionary<ProgramScreen, Screen> screens = DefineScreens();
 
-                    tn3270ConnectionHandler.SetAidAction(AID.PF3, () => { tn3270ConnectionHandler.CloseConnection(); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF4, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.ColorScreen]); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF5, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.HighlightScreen]); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF6, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen]); });
+                    // Screens Actions
+                    Action<AID> formScreenAction = null;
+                    Action<AID> formScreenInsideAction = null;
 
-                    tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, (aidReceived) =>
+                    formScreenAction = (aidReceived) =>
                     {
-                        screens[ProgramScreen.FormScreen].Fields
-                                        .Where(x => x.Write == true && !String.IsNullOrEmpty(x.Contents))
-                                        .ForEach(x =>
-                                        {
-                                            Console.WriteLine($"Field {x.Name}: {x.Contents}");
-                                        });
-                    });
+                        if (aidReceived == AID.Enter)
+                        {
+                            var fName = screens[ProgramScreen.FormScreen].GetFieldData("fname");
+                            var lName = screens[ProgramScreen.FormScreen].GetFieldData("lname");
+
+                            screens[ProgramScreen.FormScreenInside].SetFieldValue("fname", fName);
+                            screens[ProgramScreen.FormScreenInside].SetFieldValue("lname", lName);
+                            tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreenInside], true, formScreenInsideAction);
+                        }
+                    };
+
+                    formScreenInsideAction = (aidReceived) =>
+                    {
+                        if (aidReceived == AID.Enter)
+                        {
+                            tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, 
+                                () => {
+                                    screens[ProgramScreen.FormScreen].ClearFieldValue("fname");
+                                    screens[ProgramScreen.FormScreen].ClearFieldValue("lname");
+                                },
+                                formScreenAction);
+                        };
+                    };
+
+
+                    tn3270ConnectionHandler.SetAidAction(AID.PF3, () => { tn3270ConnectionHandler.CloseConnection(); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF4, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.ColorScreen], true, formScreenAction); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF5, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.HighlightScreen], true, formScreenAction); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF6, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, formScreenAction); });
+
+                    tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, formScreenAction);
+
+                    //tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, (aidReceived) =>
+                    //{
+                    //    //screens[ProgramScreen.FormScreen].Fields
+                    //    //                .Where(x => x.Write == true && !String.IsNullOrEmpty(x.Contents))
+                    //    //                .ForEach(x =>
+                    //    //                {
+                    //    //                    Console.WriteLine($"Field {x.Name}: {x.Contents}");
+                    //    //                });
+                    //
+                    //
+                    //    if (aidReceived == AID.Enter)
+                    //    {
+                    //        var fName = screens[ProgramScreen.FormScreen].GetFieldData("fname");
+                    //        var lName = screens[ProgramScreen.FormScreen].GetFieldData("lname");
+                    //
+                    //        screens[ProgramScreen.FormScreenInside].SetFieldValue("fname", fName);
+                    //        screens[ProgramScreen.FormScreenInside].SetFieldValue("lname", lName);
+                    //        tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreenInside]);
+                    //    }
+                    //});
                 });
         }
 
@@ -79,6 +127,19 @@ namespace TN3270Sharp.Example.App
                 new Field() {Row = 9, Column = 1, Contents="Press"},
                 new Field() {Row = 9, Column = 7, Contents="ENTER", Intensity=true},
                 new Field() {Row = 9, Column = 13, Contents="to submit your name."},
+                new Field() {Row = 11, Column = 1, Intensity = true, Color = Colors.Red, Name="errormsg"},
+                new Field() {Row = 23, Column = 1, Contents=PFKeys}
+            };
+
+            Screen FormScreenInside = new Screen();
+            FormScreenInside.Fields = new List<Field>()
+            {
+                new Field() {Row = 1, Column = 28, Contents = "3270 Example Application", Intensity=true},
+                new Field() {Row = 3, Column = 1, Contents = "Thank you for submitting your name. Here's what I know:"},
+                new Field() {Row = 5, Column = 1, Contents = "Your first name is"},
+                new Field() {Row = 5, Column = 20, Name="fname"},
+                new Field() {Row = 6, Column = 1, Contents = "And your last name is"},
+                new Field() {Row = 6, Column = 23, Name="lname"},
                 new Field() {Row = 11, Column = 1, Intensity = true, Color = Colors.Red, Name="errormsg"},
                 new Field() {Row = 23, Column = 1, Contents=PFKeys}
             };
@@ -131,6 +192,7 @@ namespace TN3270Sharp.Example.App
 
             Dictionary<ProgramScreen, Screen> screens = new Dictionary<ProgramScreen, Screen>();
             screens[ProgramScreen.FormScreen] = FormScreen;
+            screens[ProgramScreen.FormScreenInside] = FormScreenInside;
             screens[ProgramScreen.TitleScreen] = TitleScreen;
             screens[ProgramScreen.ColorScreen] = ColorScreen;
             screens[ProgramScreen.HighlightScreen] = HighlightScreen;

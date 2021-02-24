@@ -21,17 +21,40 @@ namespace TN3270Sharp
 
         public void ShowScreen(Screen screen)
         {
-            ShowScreen(screen, true, null);
+            ShowScreen(screen, true, null, null);
+        }
+
+        public void ShowScreen(Screen screen, bool executePredefinedAidActions)
+        {
+            ShowScreen(screen, executePredefinedAidActions, null, null);
+        }
+
+        public void ShowScreen(Screen screen, bool executePredefinedAidActions, Action beforeScreenRenderAction)
+        {
+            ShowScreen(screen, executePredefinedAidActions, beforeScreenRenderAction, null);
         }
 
         public void ShowScreen(Screen screen, bool executePredefinedAidActions, Action<AID> screenBufferProcess)
         {
+            ShowScreen(screen, executePredefinedAidActions, null, screenBufferProcess);
+        }
+
+        public void ShowScreen(Screen screen, bool executePredefinedAidActions, Action beforeScreenRenderAction, Action<AID> screenBufferProcess)
+        {
+            if (beforeScreenRenderAction != null)
+                beforeScreenRenderAction();
+
             screen.Show(NetworkStream);
 
             try
             {
                 while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
                 {
+                    if(BufferBytes[0] == TelnetOptions.IAC)
+                    {
+                        Console.WriteLine("IAC");
+                    }
+
                     AID recvdAID = (AID)BufferBytes[0];
 
                     if (executePredefinedAidActions == true && AidActions.ContainsKey(recvdAID) && AidActions[recvdAID] != null)
@@ -44,7 +67,8 @@ namespace TN3270Sharp
                     Response response = new Response(BufferBytes);
                     response.ParseFieldsScreen(screen);
 
-                    screenBufferProcess(recvdAID);
+                    if(screenBufferProcess != null)
+                        screenBufferProcess(recvdAID);
                 }
             }
             catch (Exception ex)
