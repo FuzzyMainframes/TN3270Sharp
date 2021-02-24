@@ -15,7 +15,7 @@ namespace TN3270Sharp.Example.App
             Thread t = new Thread(delegate ()
             {
                 // replace the IP with your system IP Address...
-                ServerTest myServer = new ServerTest("127.0.0.1", 9999);
+                ServerTest myServer = new ServerTest("127.0.0.1", 3270);
             });
             t.Start();
 

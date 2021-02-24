@@ -29,7 +29,7 @@ namespace TN3270Sharp
 
             foreach (Field fld in Fields)
             {
-                
+
 
                 // tell the terminal where to draw field
                 DataStream.SBA(stream, fld.Row, fld.Column);
@@ -41,9 +41,9 @@ namespace TN3270Sharp
                 {
                     // TODO
                 }
-                
-                if (content != null && content.Length > 0 )
-                    stream.Write(ebcdic.ASCIItoEBCDIC(content));
+
+                if (content != null && content.Length > 0)
+                    stream.Write(Ebcdic.ASCIItoEBCDIC(content));
             }
             DataStream.SBA(stream, row, col);
             DataStream.IC(stream);

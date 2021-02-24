@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using static TN3270Sharp.ebcdic;
+using static TN3270Sharp.Ebcdic;
 
 namespace TN3270Sharp.Example.App
 {
@@ -18,6 +18,8 @@ namespace TN3270Sharp.Example.App
         TcpListener server = null;
         public ServerTest(string ip, int port)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -28,15 +30,15 @@ namespace TN3270Sharp.Example.App
         {
             try
             {
-                while (true)
-                {
+                //while (true)
+                //{
                     Console.WriteLine("Waiting for a connection from a TN3270 client...");
                     TcpClient client = server.AcceptTcpClient();
                     Console.WriteLine("Client has connected from {0}!", client.Client.RemoteEndPoint.ToString());
 
                     Thread t = new Thread(new ParameterizedThreadStart(HandleDeivce));
                     t.Start(client);
-                }
+                //}
             }
             catch (SocketException e)
             {
@@ -130,8 +132,6 @@ namespace TN3270Sharp.Example.App
             int i;
             try
             {
-
-
                 TitleScreen.Show(stream);
 
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
@@ -146,7 +146,14 @@ namespace TN3270Sharp.Example.App
 
                     if (recvdAID == AID.PF3)
                     {
+                        // Clear the terminal
+                        Screen clearScreen = new Screen();
+                        clearScreen.Fields = new List<Field>();
+                        clearScreen.Show(stream);
+
                         client.Close();
+
+                        break;
                     }
                     if (recvdAID == AID.PF4)
                     {
