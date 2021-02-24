@@ -25,11 +25,14 @@ namespace TN3270Sharp
 
         public Tn3270Server(string ipAddress, int port, string defaultEbcdicEncoding)
         {
+            IpAddress = ipAddress;
+            Port = port;
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Ebcdic.SetEbcdicEncoding(defaultEbcdicEncoding);
         }
 
-        public void StartListener(Func<bool> breakCondition, Action<Func<byte[]>, Func<string>> handleConnectionAction)
+        public void StartListener(Func<bool> breakCondition, Action<ITn3270ConnectionHandler> handleConnectionAction)
         {
             var server = new TcpListener(IPAddress.Parse(IpAddress), Port);
             server.Start();
@@ -39,55 +42,17 @@ namespace TN3270Sharp
                 TcpClient client = server.AcceptTcpClient();
                 new Thread(() =>
                 {
-                    string data = null;
-                    byte[] bytes = new byte[256];
-                    
-                    Func<byte[]> getBufferBytes = () =>
+                    using (Tn3270ConnectionHandler tn3270ConnectionHandler = new Tn3270ConnectionHandler(client))
                     {
-                        return bytes;
-                    };
-
-                    Func<string> getData = () =>
-                    {
-                        return data;
-                    };
-
-                    Func<NetworkStream> getNetworkStream = () =>
-                    {
-                        return client.GetStream();
-                    };
-
-                    NegotiateTelnet(client.GetStream(), bytes);
-
+                        tn3270ConnectionHandler.NegotiateTelnet();
+                        handleConnectionAction(tn3270ConnectionHandler);
+                    }
                 }).Start();
             }
 
             server.Stop();
         }
 
-        private static void NegotiateTelnet(NetworkStream stream, byte[] bytes)
-        {
-            // Telnet Negotiation
-
-            // Term Type
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE });
-            var x = stream.Read(bytes, 0, bytes.Length);
-
-            // Term Type Sub-options
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, TelnetCommands.IAC, TelnetCommands.SE });
-            x = stream.Read(bytes, 0, bytes.Length);
-
-            //DO EOR
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR });
-            x = stream.Read(bytes, 0, bytes.Length);
-
-            // DO Binary
-            stream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY });
-            x = stream.Read(bytes, 0, bytes.Length);
-
-            // WILL binary, eor
-            stream.Write(new Byte[] { TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY });
-            x = stream.Read(bytes, 0, bytes.Length);
-        }
+        
     }
 }

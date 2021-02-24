@@ -122,7 +122,7 @@ namespace TN3270Sharp.Example.App
             TcpClient client = (TcpClient)obj;
             NetworkStream stream = client.GetStream();
 
-            string data = null;
+            //string data = null;
             Byte[] bytes = new Byte[256];
 
             NegotiateTelnet(stream, bytes);
@@ -135,7 +135,7 @@ namespace TN3270Sharp.Example.App
                 while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     string hex = BitConverter.ToString(bytes);
-                    data = Encoding.ASCII.GetString(bytes, 0, i);
+                    //data = Encoding.ASCII.GetString(bytes, 0, i);
                     Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
                     AID recvdAID = (AID)bytes[0];
                     Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));

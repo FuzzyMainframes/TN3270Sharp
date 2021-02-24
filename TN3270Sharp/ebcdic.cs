@@ -25,10 +25,14 @@ namespace TN3270Sharp
             return Encoding.Convert(AsciiEncoding, EbcdicEncoding, AsciiEncoding.GetBytes(asciiString));
         }
 
-        public static byte[] EBCDICtoASCII(string ebcdicString)
+        public static string EBCDICtoASCII(byte[] ebcdicString)
         {  
-            return Encoding.Convert(AsciiEncoding, EbcdicEncoding, EbcdicEncoding.GetBytes(ebcdicString));
+            return Encoding.ASCII.GetString(Encoding.Convert(AsciiEncoding, EbcdicEncoding, ebcdicString));
         }
 
+        public static byte[] EBCDICtoASCII(string ebcdicString)
+        {
+            return Encoding.Convert(AsciiEncoding, EbcdicEncoding, EbcdicEncoding.GetBytes(ebcdicString));
+        }
     }
 }
