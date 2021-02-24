@@ -42,37 +42,15 @@ namespace TN3270Sharp
                     AID recvdAID = (AID)BufferBytes[0];
 
                     if (executePredefinedAidActions == true && AidActions.ContainsKey(recvdAID))
-                        AidActions[recvdAID]();
-                    screenBufferProcess(recvdAID);
-
-
-                    //
-                    Response response = new Response();
-
-                    response.ActionID = (AID)BufferBytes[0];
-
-                    response.Cursor[0] = BufferBytes[1];
-                    response.Cursor[1] = BufferBytes[2];
-
-
-                    int x = 0;
-                    List<byte> temp = new List<byte>();
-                    List<byte[]> thelist = new List<byte[]>();
-
-                    while (BufferBytes[x] != 0xff)
                     {
-                        if (BufferBytes[x] != 0x11)
-                        {
-                            temp.Add(BufferBytes[x]);
-                        }
-                        else
-                        {
-                            thelist.Add(temp.ToArray());
-                            temp = new List<byte>();
-                        }
-                        x++;
+                        AidActions[recvdAID]();
+                        if (ConnectionClosed == true)
+                            break;
                     }
-                    thelist.Add(temp.ToArray());
+
+                    Response response = new Response(BufferBytes, screen);
+
+                    screenBufferProcess(recvdAID);
                 }
             }
             catch (Exception ex)

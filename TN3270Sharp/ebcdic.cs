@@ -27,12 +27,12 @@ namespace TN3270Sharp
 
         public static string EBCDICtoASCII(byte[] ebcdicString)
         {  
-            return Encoding.ASCII.GetString(Encoding.Convert(AsciiEncoding, EbcdicEncoding, ebcdicString));
+            return Encoding.ASCII.GetString(Encoding.Convert(EbcdicEncoding, AsciiEncoding, ebcdicString));
         }
 
         public static byte[] EBCDICtoASCII(string ebcdicString)
         {
-            return Encoding.Convert(AsciiEncoding, EbcdicEncoding, EbcdicEncoding.GetBytes(ebcdicString));
+            return Encoding.Convert(EbcdicEncoding, AsciiEncoding, EbcdicEncoding.GetBytes(ebcdicString));
         }
     }
 }

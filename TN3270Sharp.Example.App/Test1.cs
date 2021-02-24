@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -40,13 +41,19 @@ namespace TN3270Sharp.Example.App
                     {
                         var bytesBuffer = tn3270ConnectionHandler.GetBufferBytes();
 
-                        string hex = BitConverter.ToString(bytesBuffer);
-                        var data = Encoding.ASCII.GetString(bytesBuffer, 0, tn3270ConnectionHandler.GetTotalBytesReadFromBuffer());
-                        Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
-                        AID recvdAID = (AID)bytesBuffer[0];
-                        Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));
-                        Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytesBuffer, 1, 2));
+                        //string hex = BitConverter.ToString(bytesBuffer);
+                        //var data = Encoding.ASCII.GetString(bytesBuffer, 0, tn3270ConnectionHandler.GetTotalBytesReadFromBuffer());
+                        //Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
+                        //AID recvdAID = (AID)bytesBuffer[0];
+                        //Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));
+                        //Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytesBuffer, 1, 2));
 
+                        Screens[ProgramScreen.FormScreen].Fields
+                                        .Where(x => x.Write == true && !String.IsNullOrEmpty(x.Contents))
+                                        .ForEach(x =>
+                                        {
+                                            Console.WriteLine($"Field {x.Name}: {x.Contents}");
+                                        });
                     });
                 });
         }

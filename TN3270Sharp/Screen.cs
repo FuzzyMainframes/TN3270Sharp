@@ -5,6 +5,7 @@
 //  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Sockets;
@@ -113,6 +114,15 @@ namespace TN3270Sharp
                 buffer.Add((byte)fld.Color);
             }
             return buffer.ToArray();
+        }
+
+        public void SetFieldValue(int row, int col, string data)
+        {
+            var field = Fields.Where(x => x.Row == row && x.Column == col).FirstOrDefault();
+            if (field == null)
+                return;
+
+            field.Contents = data;
         }
     }
 }

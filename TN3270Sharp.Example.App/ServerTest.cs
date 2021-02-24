@@ -169,12 +169,7 @@ namespace TN3270Sharp.Example.App
 
 
                     // FIXME -- CLEAN UP AND REFACTOR
-                    Response response = new Response();
-
-                    response.ActionID = (AID)bytes[0];
-
-                    response.Cursor[0] = bytes[1];
-                    response.Cursor[1] = bytes[2];
+                    Response response = new Response(bytes, FormScreen);
 
 
                     int x = 0;
