@@ -18,8 +18,6 @@ namespace TN3270Sharp.Example.App
         TcpListener server = null;
         public ServerTest(string ip, int port)
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
             IPAddress localAddr = IPAddress.Parse(ip);
             server = new TcpListener(localAddr, port);
             server.Start();
@@ -32,12 +30,12 @@ namespace TN3270Sharp.Example.App
             {
                 //while (true)
                 //{
-                    Console.WriteLine("Waiting for a connection from a TN3270 client...");
-                    TcpClient client = server.AcceptTcpClient();
-                    Console.WriteLine("Client has connected from {0}!", client.Client.RemoteEndPoint.ToString());
+                Console.WriteLine("Waiting for a connection from a TN3270 client...");
+                TcpClient client = server.AcceptTcpClient();
+                Console.WriteLine("Client has connected from {0}!", client.Client.RemoteEndPoint.ToString());
 
-                    Thread t = new Thread(new ParameterizedThreadStart(HandleDeivce));
-                    t.Start(client);
+                Thread t = new Thread(new ParameterizedThreadStart(HandleDeivce));
+                t.Start(client);
                 //}
             }
             catch (SocketException e)

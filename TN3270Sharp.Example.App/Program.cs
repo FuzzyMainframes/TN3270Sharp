@@ -12,12 +12,14 @@ namespace TN3270Sharp.Example.App
     {
         static void Main(string[] args)
         {
-            Thread t = new Thread(delegate ()
-            {
-                // replace the IP with your system IP Address...
-                ServerTest myServer = new ServerTest("127.0.0.1", 3270);
-            });
-            t.Start();
+            //Thread t = new Thread(delegate ()
+            //{
+            //    // replace the IP with your system IP Address...
+            //    ServerTest myServer = new ServerTest("127.0.0.1", 3270);
+            //});
+            //t.Start();
+
+            Test1 test1 = new Test1();
 
             Console.WriteLine("TN3270Sharp Demo Server");
             Console.WriteLine("Version 0.0.1");

@@ -13,7 +13,12 @@ namespace TN3270Sharp
     public static class Ebcdic
     {
         private static Encoding AsciiEncoding { get; } = Encoding.ASCII;
-        private static Encoding EbcdicEncoding { get; set; } = Encoding.GetEncoding("IBM037");
+        private static Encoding EbcdicEncoding { get; set; }
+
+        public static void SetEbcdicEncoding(string encoding)
+        {
+            EbcdicEncoding = Encoding.GetEncoding(encoding);
+        }
 
         public static byte[] ASCIItoEBCDIC(string asciiString)
         {         
