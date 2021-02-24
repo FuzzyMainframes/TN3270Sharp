@@ -9,7 +9,7 @@ using System.Text;
 
 namespace TN3270Sharp
 {
-    public static class TelnetCommands
+    public static class TelnetOptions
     {
         public const byte BINARY = 0;
         public const byte TERMINAL_TYPE = 0x18;

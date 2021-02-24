@@ -28,6 +28,7 @@ namespace TN3270Sharp.Example.App
             Console.WriteLine("Control+C to exit...\n\n");
 
             Test1 test1 = new Test1();
+            test1.CreateServer();
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TN3270Sharp
             DataStream.SBA(stream, row, col);
             DataStream.IC(stream);
 
-            stream.Write(new byte[] { TelnetCommands.IAC, 0xef });
+            stream.Write(new byte[] { TelnetOptions.IAC, 0xef });
 
         }
 

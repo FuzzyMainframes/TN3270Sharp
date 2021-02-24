@@ -16,9 +16,12 @@ namespace TN3270Sharp.Example.App
             HighlightScreen = 4 
         }
 
-        Dictionary<ProgramScreen, Screen> Screens = new Dictionary<ProgramScreen, Screen>();
-
         public Test1() 
+        {
+            
+        }
+
+        public void CreateServer()
         {
             Func<bool> closeServerFunction = () =>
             {
@@ -26,29 +29,26 @@ namespace TN3270Sharp.Example.App
                 return false;
             };
 
-            DefineScreens();
+
 
             Tn3270Server tn3270Server = new Tn3270Server(3270);
-            tn3270Server.StartListener(closeServerFunction,
+            tn3270Server.StartListener(
+                closeServerFunction,
+                () => {
+
+                },
                 (tn3270ConnectionHandler) =>
                 {
+                    Dictionary<ProgramScreen, Screen> screens = DefineScreens();
+
                     tn3270ConnectionHandler.SetAidAction(AID.PF3, () => { tn3270ConnectionHandler.CloseConnection(); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF4, () => { tn3270ConnectionHandler.ShowScreen(Screens[ProgramScreen.ColorScreen]); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF5, () => { tn3270ConnectionHandler.ShowScreen(Screens[ProgramScreen.HighlightScreen]); });
-                    tn3270ConnectionHandler.SetAidAction(AID.PF6, () => { tn3270ConnectionHandler.ShowScreen(Screens[ProgramScreen.FormScreen]); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF4, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.ColorScreen]); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF5, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.HighlightScreen]); });
+                    tn3270ConnectionHandler.SetAidAction(AID.PF6, () => { tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen]); });
 
-                    tn3270ConnectionHandler.ShowScreen(Screens[ProgramScreen.FormScreen], true, (aidReceived) =>
+                    tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreen], true, (aidReceived) =>
                     {
-                        var bytesBuffer = tn3270ConnectionHandler.GetBufferBytes();
-
-                        //string hex = BitConverter.ToString(bytesBuffer);
-                        //var data = Encoding.ASCII.GetString(bytesBuffer, 0, tn3270ConnectionHandler.GetTotalBytesReadFromBuffer());
-                        //Console.WriteLine("{1}: Received: {0}", hex, Thread.CurrentThread.ManagedThreadId);
-                        //AID recvdAID = (AID)bytesBuffer[0];
-                        //Console.WriteLine("AID: {0}  [ {1} ]", recvdAID.ToString("g"), recvdAID.ToString("d"));
-                        //Console.WriteLine("Cusrsor Location: {0}", BitConverter.ToString(bytesBuffer, 1, 2));
-
-                        Screens[ProgramScreen.FormScreen].Fields
+                        screens[ProgramScreen.FormScreen].Fields
                                         .Where(x => x.Write == true && !String.IsNullOrEmpty(x.Contents))
                                         .ForEach(x =>
                                         {
@@ -58,7 +58,7 @@ namespace TN3270Sharp.Example.App
                 });
         }
 
-        private void DefineScreens()
+        private Dictionary<ProgramScreen, Screen> DefineScreens()
         {
             string PFKeys = "PF3 Exit    PF4 Color Demo    PF5 Highlight Demo    PF6 Form Demo";
 
@@ -129,10 +129,13 @@ namespace TN3270Sharp.Example.App
             };
 
 
-            Screens[ProgramScreen.FormScreen] = FormScreen;
-            Screens[ProgramScreen.TitleScreen] = TitleScreen;
-            Screens[ProgramScreen.ColorScreen] = ColorScreen;
-            Screens[ProgramScreen.HighlightScreen] = HighlightScreen;
+            Dictionary<ProgramScreen, Screen> screens = new Dictionary<ProgramScreen, Screen>();
+            screens[ProgramScreen.FormScreen] = FormScreen;
+            screens[ProgramScreen.TitleScreen] = TitleScreen;
+            screens[ProgramScreen.ColorScreen] = ColorScreen;
+            screens[ProgramScreen.HighlightScreen] = HighlightScreen;
+
+            return screens;
         }
     }
 }

@@ -19,12 +19,11 @@ namespace TN3270Sharp
         public Dictionary<byte[], string> Map { get; set; } = new Dictionary<byte[], string>();
         public byte[] BufferBytes { get; }
 
-        public Response(byte[] bufferBytes, Screen screen) 
+        public Response(byte[] bufferBytes) 
         {
             BufferBytes = bufferBytes;
 
             ReadAction();
-            ReadFields(screen);
         }
 
         private void ReadAction()
@@ -45,7 +44,7 @@ namespace TN3270Sharp
             return new Tuple<int, int>(nCol, nRow);
         }
 
-        private void ReadFields(Screen screen)
+        public void ParseFieldsScreen(Screen screen)
         {
             var inField = false;
             var fieldBytes = new List<byte>();
@@ -59,7 +58,7 @@ namespace TN3270Sharp
                     if (i + 1 >= BufferBytes.Length)
                         return;
 
-                    if (BufferBytes[i + 1] == 0xef)
+                    if (BufferBytes[i + 1] == 0xef && fieldPosition != null)
                     {
                         var data = Ebcdic.EBCDICtoASCII(fieldBytes.ToArray());
 
@@ -73,10 +72,7 @@ namespace TN3270Sharp
                 }
                 if(b == 0x11) 
                 {
-                    // Increment the buffer index
-                    i += 1;
-
-                    if (inField == true)
+                    if (inField == true && fieldPosition != null)
                     {
                         var data = Ebcdic.EBCDICtoASCII(fieldBytes.ToArray());
 
@@ -87,7 +83,7 @@ namespace TN3270Sharp
                     fieldBytes.Clear();
                     inField = true;
 
-                    fieldPosition = ReadPosition(BufferBytes[i], BufferBytes[++i]);
+                    fieldPosition = ReadPosition(BufferBytes[++i], BufferBytes[++i]);
 
                     continue;
                 }
