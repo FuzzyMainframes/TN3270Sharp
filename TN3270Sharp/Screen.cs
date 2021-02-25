@@ -19,44 +19,41 @@ namespace TN3270Sharp
         public string Name { get; set; }
         public List<Field> Fields { get; set; }
 
+ 
         // Initially adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // GetPosition translates row and col to buffer address control characters.
-        public void Show(NetworkStream stream, int row, int col)
-        {
-            DataStream.EraseWrite(stream);
-            stream.Write(new byte[] {
-                    (byte)ControlChars.WCCdefault });
-
-            foreach (Field fld in Fields)
-            {
-
-
-                // tell the terminal where to draw field
-                DataStream.SBA(stream, fld.Row, fld.Column);
-                stream.Write(BuildField(fld));
-
-
-                var content = fld.Contents;
-                if (fld.Name != "")
-                {
-                    // TODO
-                }
-
-                if (content != null && content.Length > 0)
-                    stream.Write(Ebcdic.ASCIItoEBCDIC(content));
-            }
-            DataStream.SBA(stream, row, col);
-            DataStream.IC(stream);
-
-            stream.Write(new byte[] { TelnetOptions.IAC, 0xef });
-
-        }
-
-        public void Show(NetworkStream stream)
-        {
-            this.Show(stream, 1, 1);
-        }
+        //public void Show(NetworkStream stream, int row, int col)
+        //{
+        //    DataStream.EraseWrite(stream);
+        //    stream.Write(new byte[] { (byte)ControlChars.WCCdefault });
+        //
+        //    foreach (Field fld in Fields)
+        //    {
+        //        // tell the terminal where to draw field
+        //        DataStream.SBA(stream, fld.Row, fld.Column);
+        //        stream.Write(BuildField(fld));
+        //
+        //        var content = fld.Contents;
+        //        if (fld.Name != "")
+        //        {
+        //            // TODO
+        //        }
+        //
+        //        if (content != null && content.Length > 0)
+        //            stream.Write(Ebcdic.ASCIItoEBCDIC(content));
+        //    }
+        //    DataStream.SBA(stream, row, col);
+        //    DataStream.IC(stream);
+        //
+        //    stream.Write(new byte[] { TelnetOptions.IAC, 0xef });
+        //
+        //}
+        //
+        //public void Show(NetworkStream stream)
+        //{
+        //    this.Show(stream, 1, 1);
+        //}
 
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
@@ -65,7 +62,7 @@ namespace TN3270Sharp
         //
         // C#-ification and further changes are Copyright 20200 by Robert J. Lawrence (roblthegreat)
         // licened under the MIT license.
-        byte[] BuildField(Field fld)
+        public byte[] BuildField(Field fld)
         {
             List<byte> buffer = new List<byte>();
             if (fld.Color == Colors.DefaultColor && fld.Highlighting == Highlight.DefaultHighlight)

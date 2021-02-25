@@ -5,18 +5,19 @@ using System.Text;
 
 namespace TN3270Sharp
 {
-    public class Telnet
+    public class Telnet : IDisposable
     {
         protected TcpClient TcpClient { get; }
         protected NetworkStream NetworkStream { get; }
         protected byte[] BufferBytes { get; set; }
         protected int TotalBytesReadFromBuffer { get; set; } = 0;
+        protected bool ConnectionClosed { get; private set; } = false;
 
         private enum TelnetState : int
         {
             Normal = 0,
             Command = 1,
-            SubNeg = 2
+            SubNegotiation = 2
         }
 
         public Telnet(TcpClient tcpClient, NetworkStream networkStream)
@@ -25,6 +26,16 @@ namespace TN3270Sharp
             NetworkStream = networkStream;
 
             BufferBytes = new byte[256];
+        }
+
+        public void CloseConnection()
+        {
+            if (ConnectionClosed == false)
+            {
+                NetworkStream.Close();
+                TcpClient.Close();
+                ConnectionClosed = true;
+            }
         }
 
         public void Negotiate()
@@ -58,6 +69,50 @@ namespace TN3270Sharp
 
             NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DONT, TelnetOptions.TERMINAL_TYPE });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+        }
+
+        public void Read(Action<byte[]> action)
+        {
+            while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
+            {
+                action(BufferBytes);
+            }
+        }
+
+        public void SendScreen(Screen screen)
+        {
+            SendScreen(screen, 1, 1);
+        }
+
+        public void SendScreen(Screen screen, int row, int col)
+        {
+            DataStream.EraseWrite(NetworkStream);
+            NetworkStream.Write(new byte[] { (byte)ControlChars.WCCdefault });
+
+            foreach (Field fld in screen.Fields)
+            {
+                // tell the terminal where to draw field
+                DataStream.SBA(NetworkStream, fld.Row, fld.Column);
+                NetworkStream.Write(screen.BuildField(fld));
+
+                var content = fld.Contents;
+                if (fld.Name != "")
+                {
+                    // TODO
+                }
+
+                if (content != null && content.Length > 0)
+                    NetworkStream.Write(Ebcdic.ASCIItoEBCDIC(content));
+            }
+            DataStream.SBA(NetworkStream, row, col);
+            DataStream.IC(NetworkStream);
+
+            NetworkStream.Write(new byte[] { TelnetOptions.IAC, 0xef });
+        }
+
+        public void Dispose()
+        {
+            CloseConnection();
         }
     }
 }

@@ -5,19 +5,19 @@ using System.Text;
 
 namespace TN3270Sharp
 {
-    public class Tn3270ConnectionHandler : Telnet, ITn3270ConnectionHandler, IDisposable
+    public class Tn3270ConnectionHandler : ITn3270ConnectionHandler, IDisposable
     {
+        private Telnet Telnet { get; set; }
         private Dictionary<AID, Action> AidActions = new Dictionary<AID, Action>();
-        private bool ConnectionClosed { get; set; } = false;
 
         public Tn3270ConnectionHandler(TcpClient tcpClient)
-            : base(tcpClient, tcpClient.GetStream())
         {
+            Telnet = new Telnet(tcpClient, tcpClient.GetStream());
             ResetAidActions();
         }
 
-        public byte[] GetBufferBytes() => BufferBytes;
-        public int GetTotalBytesReadFromBuffer() => TotalBytesReadFromBuffer;
+        //public byte[] GetBufferBytes() => BufferBytes;
+        //public int GetTotalBytesReadFromBuffer() => TotalBytesReadFromBuffer;
 
         public void ShowScreen(Screen screen)
         {
@@ -44,32 +44,48 @@ namespace TN3270Sharp
             if (beforeScreenRenderAction != null)
                 beforeScreenRenderAction();
 
-            screen.Show(NetworkStream);
+            Telnet.SendScreen(screen);
 
             try
             {
-                while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
+                Telnet.Read((bufferBytes) =>
                 {
-                    if(BufferBytes[0] == TelnetOptions.IAC)
-                    {
-                        Console.WriteLine("IAC");
-                    }
-
-                    AID recvdAID = (AID)BufferBytes[0];
+                    AID recvdAID = (AID)bufferBytes[0];
 
                     if (executePredefinedAidActions == true && AidActions.ContainsKey(recvdAID) && AidActions[recvdAID] != null)
                     {
                         AidActions[recvdAID]();
-                        if (ConnectionClosed == true)
-                            break;
                     }
 
-                    Response response = new Response(BufferBytes);
+                    Response response = new Response(bufferBytes);
                     response.ParseFieldsScreen(screen);
 
-                    if(screenBufferProcess != null)
+                    if (screenBufferProcess != null)
                         screenBufferProcess(recvdAID);
-                }
+                });
+
+                //while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
+                //{
+                //    if(BufferBytes[0] == TelnetOptions.IAC)
+                //    {
+                //        Console.WriteLine("IAC");
+                //    }
+                //
+                //    AID recvdAID = (AID)BufferBytes[0];
+                //
+                //    if (executePredefinedAidActions == true && AidActions.ContainsKey(recvdAID) && AidActions[recvdAID] != null)
+                //    {
+                //        AidActions[recvdAID]();
+                //        if (ConnectionClosed == true)
+                //            break;
+                //    }
+                //
+                //    Response response = new Response(BufferBytes);
+                //    response.ParseFieldsScreen(screen);
+                //
+                //    if(screenBufferProcess != null)
+                //        screenBufferProcess(recvdAID);
+                //}
             }
             catch (Exception ex)
             {
@@ -84,7 +100,7 @@ namespace TN3270Sharp
 
         public void NegotiateTelnet()
         {
-            Negotiate();
+            Telnet.Negotiate();
         }
 
         public void ResetAidActions()
@@ -123,17 +139,12 @@ namespace TN3270Sharp
 
         public void CloseConnection()
         {
-            if (ConnectionClosed == false)
-            {
-                NetworkStream.Close();
-                TcpClient.Close();
-                ConnectionClosed = true;
-            }
+            Telnet.CloseConnection();
         }
 
         public void Dispose()
         {
-            CloseConnection();
+            Telnet.Dispose();
         }
     }
 }

@@ -7,8 +7,8 @@ namespace TN3270Sharp
     public interface ITn3270ConnectionHandler
     {
         // ---------------------------------------------------------------
-        byte[] GetBufferBytes();
-        int GetTotalBytesReadFromBuffer();
+        //byte[] GetBufferBytes();
+        //int GetTotalBytesReadFromBuffer();
 
         // ---------------------------------------------------------------
         void ShowScreen(Screen screen);
