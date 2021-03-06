@@ -12,7 +12,7 @@ TN3270Sharp is licensed under the MIT License which permits commercial use; modi
 ## Acknowledgements
 I have borrowed / adapted some code from [racingmars/go3270](https://github.com/racingmars/go3270) and [Open3270/Open3270](https://github.com/Open3270/Open3270), both of which are also released under the MIT License.
 
-I want to thank [@bencz](https://github.com/bencz) for major contribution, including a new implementation of the TN3270 Connection Handler.
+I want to thank [bencz](https://github.com/bencz) for major contribution, including a new implementation of the TN3270 Connection Handler.
 
 ## Status
 This project is still very early in development and is **not suitable** for use any project beyond experimentation. There is most certainly bugs and missing features.  The API will also likely change many times before it is declared ready for any realworld use.
@@ -47,3 +47,7 @@ dotnet run
 
 ## Contributions
 Pull requests and bug reports are welcome.
+
+## Contributors
+* [roblthegreat](https://github.com/roblthegreat) 
+* [bencz](https://github.com/bencz)
