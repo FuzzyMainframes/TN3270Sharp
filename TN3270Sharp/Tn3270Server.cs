@@ -1,5 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// This file is part of https://github.com/roblthegreat/TN3270Sharp
+// Copyright 2020 by Robert J. Lawrence (roblthegreat), licensed under the MIT license. See
+// LICENSE in the project root for license information.
+//
+//  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
+
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,14 +18,13 @@ namespace TN3270Sharp
         private int Port { get; set; }
 
         public Tn3270Server(int port)
-            : this("127.0.0.1", port)
+            : this("0.0.0.0", port)
         {
         }
 
         public Tn3270Server(string ipAddress, int port)
             : this(ipAddress, port, "IBM037")
         {
-
         }
 
         public Tn3270Server(string ipAddress, int port, string defaultEbcdicEncoding)
@@ -56,7 +60,5 @@ namespace TN3270Sharp
 
             server.Stop();
         }
-
-        
     }
 }

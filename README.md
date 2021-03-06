@@ -26,14 +26,14 @@ This includes:
 
 ## How to use
 * Install [.NET Core 3.1+](https://dotnet.microsoft.com/download/dotnet-core/3.1)
-* Close the repo
+* Clone the repo
 * Type the following in the shell
 
 ```
 cd TN3270Sharp.Example.App
 dotnet run
 ```
-* launch your TN3270 emulator and connect to 127.0.0.1 port 9999
+* launch your TN3270 emulator and connect to 127.0.0.1 port 3270
 
 ## Reference Material
 * [racingmars/go3270](https://github.com/racingmars/go3270)

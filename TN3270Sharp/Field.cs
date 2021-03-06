@@ -4,10 +4,6 @@
 //
 //  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace TN3270Sharp
 {
     public class Field

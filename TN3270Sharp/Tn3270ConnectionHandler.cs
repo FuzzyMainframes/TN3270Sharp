@@ -1,7 +1,13 @@
-﻿using System;
+﻿// This file is part of https://github.com/roblthegreat/TN3270Sharp
+// Copyright 2020 by Robert J. Lawrence (roblthegreat), licensed under the MIT license. See
+// LICENSE in the project root for license information.
+//
+//  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
+
+
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Text;
 
 namespace TN3270Sharp
 {
@@ -63,29 +69,6 @@ namespace TN3270Sharp
                     if (screenBufferProcess != null)
                         screenBufferProcess(recvdAID);
                 });
-
-                //while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
-                //{
-                //    if(BufferBytes[0] == TelnetOptions.IAC)
-                //    {
-                //        Console.WriteLine("IAC");
-                //    }
-                //
-                //    AID recvdAID = (AID)BufferBytes[0];
-                //
-                //    if (executePredefinedAidActions == true && AidActions.ContainsKey(recvdAID) && AidActions[recvdAID] != null)
-                //    {
-                //        AidActions[recvdAID]();
-                //        if (ConnectionClosed == true)
-                //            break;
-                //    }
-                //
-                //    Response response = new Response(BufferBytes);
-                //    response.ParseFieldsScreen(screen);
-                //
-                //    if(screenBufferProcess != null)
-                //        screenBufferProcess(recvdAID);
-                //}
             }
             catch (Exception ex)
             {

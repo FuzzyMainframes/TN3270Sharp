@@ -4,11 +4,6 @@
 //
 //  Portions of this code may have originated elsewhere and will be noted in the comments as needed.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Net;
 using System.Net.Sockets;
 
 namespace TN3270Sharp

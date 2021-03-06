@@ -6,8 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Text;
 
 namespace TN3270Sharp
 {
