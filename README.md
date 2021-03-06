@@ -1,3 +1,5 @@
+[![.NET](https://github.com/FuzzyMainframes/TN3270Sharp/actions/workflows/dotnet.yml/badge.svg)](https://github.com/FuzzyMainframes/TN3270Sharp/actions/workflows/dotnet.yml)
+
 # TN3270Sharp - 3270 Server Library for DotNetCore / C#
  a .net library to write applications/servers with C# that use TN3270 clients
 
