@@ -14,12 +14,84 @@ namespace TN3270Sharp
     public class Response
     {
         public AID ActionID { get; set; }
-        public byte[] Cursor { get; set; } = new byte[2];
         public int Row { get; set; }
         public int Column { get; set; }
-
         public Dictionary<byte[], string> Map { get; set; } = new Dictionary<byte[], string>();
+        public byte[] BufferBytes { get; }
 
+        public Response(byte[] bufferBytes) 
+        {
+            BufferBytes = bufferBytes;
 
+            ReadAction();
+        }
+
+        private void ReadAction()
+        {
+            ActionID = (AID)BufferBytes[0];
+        }
+
+        private Tuple<int, int> ReadPosition(int row, int col)
+        {
+            var hi = Utils.IODecodes[row] << 6;
+            var lo = Utils.IODecodes[col];
+
+            var address = hi | lo;
+
+            int nRow = (address % 80);
+            int nCol = ((address - nRow) / 80);
+
+            return new Tuple<int, int>(nCol, nRow);
+        }
+
+        public void ParseFieldsScreen(Screen screen)
+        {
+            var inField = false;
+            var fieldBytes = new List<byte>();
+            Tuple<int, int> fieldPosition = null;
+
+            for (int i = 0; i < BufferBytes.Length; i++)
+            {
+                var b = BufferBytes[i];
+                if (b == 0xff)
+                {
+                    if (i + 1 >= BufferBytes.Length)
+                        return;
+
+                    if (BufferBytes[i + 1] == 0xef && fieldPosition != null)
+                    {
+                        var data = Ebcdic.EBCDICtoASCII(fieldBytes.ToArray());
+
+                        //Console.WriteLine("Field {0}/{1}: {2}", fieldPosition.Item1, fieldPosition.Item2, data);
+                        screen.SetFieldValue(fieldPosition.Item1 + 1, fieldPosition.Item2, data);
+
+                        fieldBytes.Clear();
+
+                        return;
+                    }
+                }
+                if(b == 0x11) 
+                {
+                    if (inField == true && fieldPosition != null)
+                    {
+                        var data = Ebcdic.EBCDICtoASCII(fieldBytes.ToArray());
+
+                        //Console.WriteLine("Field {0}/{1}: {2}", fieldPosition.Item1, fieldPosition.Item2, data);
+                        screen.SetFieldValue(fieldPosition.Item1 + 1, fieldPosition.Item2, data);
+                    }
+
+                    fieldBytes.Clear();
+                    inField = true;
+
+                    fieldPosition = ReadPosition(BufferBytes[++i], BufferBytes[++i]);
+
+                    continue;
+                }
+                if (!inField)
+                    continue;
+
+                fieldBytes.Add(b);
+            }
+        }
     }
 }

@@ -19,10 +19,12 @@ namespace TN3270Sharp
         {
             stream.Write(new byte[] { (byte)ControlChars.EraseWrite });
         }
+
         public static void IC(NetworkStream stream)
         {
             stream.Write(new byte[] { (byte)ControlChars.IC });
         }
+
         public static void SF(NetworkStream stream, byte attributeChar)
         {
             byte[] result = new byte[] { (byte)ControlChars.SF, attributeChar };
@@ -31,7 +33,7 @@ namespace TN3270Sharp
 
         public static void SFE(NetworkStream stream, byte numOfTypeValuePairs, params byte[] typeValues)
         {
-            var result = new byte[(numOfTypeValuePairs*2)+2];
+            var result = new byte[(numOfTypeValuePairs * 2) + 2];
             result[0] = (byte)ControlChars.SFE;
             result[1] = numOfTypeValuePairs;
             typeValues.CopyTo(result, 2);
@@ -42,8 +44,7 @@ namespace TN3270Sharp
         {
             var pos = Utils.GetPosition(row, col);
             byte[] result = new byte[] { (byte)ControlChars.SBA, pos[0], pos[1] };
-            stream.Write(result);  
+            stream.Write(result);
         }
-
     }
 }

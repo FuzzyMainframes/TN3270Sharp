@@ -33,7 +33,7 @@ namespace TN3270Sharp
 
         // Color is the field color. The default value is the default color.
         public Colors Color { get; set; }
-        
+
         // Highlighting is the highlight attribute for the field. The default value
         // is the default (i.e. no) highlighting.
         public byte Highlighting { get; set; }
@@ -42,9 +42,8 @@ namespace TN3270Sharp
         // data. All writeable fields on a screen must have a unique name.
         public string Name { get; set; }
 
-        public Field()
+        public Field() 
         {
-
         }
 
         public Field(int row, int col)
@@ -53,7 +52,6 @@ namespace TN3270Sharp
             this.Column = col;
         }
     }
-
 
     // Constants for valid field colors
     public enum Colors
@@ -68,14 +66,12 @@ namespace TN3270Sharp
         White = 0xf7
     }
 
-
-
     // Constants for field highlighting
     public static class Highlight
     {
         public const byte DefaultHighlight = 0;
-        public const byte Blink            = 0xf1;
-        public const byte ReverseVideo     = 0xf2;
-        public const byte Underscore       = 0xf4;
+        public const byte Blink = 0xf1;
+        public const byte ReverseVideo = 0xf2;
+        public const byte Underscore = 0xf4;
     }
 }
