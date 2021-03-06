@@ -40,34 +40,34 @@ namespace TN3270Sharp
 
         public void Negotiate()
         {
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DO, TelnetOptions.TERMINAL_TYPE });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE });
             var x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.SB, TelnetOptions.TERMINAL_TYPE, 0x01, TelnetOptions.IAC, TelnetOptions.SE });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, TelnetCommands.IAC, TelnetCommands.SE });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DO, TelnetOptions.EOR });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DO, TelnetOptions.BINARY });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new Byte[] { TelnetOptions.IAC, TelnetOptions.WILL, TelnetOptions.EOR, TelnetOptions.IAC, TelnetOptions.WILL, TelnetOptions.BINARY });
+            NetworkStream.Write(new Byte[] { TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
         }
 
         public void UnNegotiate()
         {
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.WONT, TelnetOptions.IAC, TelnetOptions.WONT, TelnetOptions.BINARY });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.BINARY });
             var x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DONT, TelnetOptions.BINARY });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.BINARY });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DONT, TelnetOptions.EOR });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.EOR });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, TelnetOptions.DONT, TelnetOptions.TERMINAL_TYPE });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.TERMINAL_TYPE });
             x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
         }
 
@@ -107,7 +107,7 @@ namespace TN3270Sharp
             DataStream.SBA(NetworkStream, row, col);
             DataStream.IC(NetworkStream);
 
-            NetworkStream.Write(new byte[] { TelnetOptions.IAC, 0xef });
+            NetworkStream.Write(new byte[] { TelnetCommands.IAC, 0xef });
         }
 
         public void Dispose()
