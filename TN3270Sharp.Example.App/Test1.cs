@@ -158,25 +158,22 @@ namespace TN3270Sharp.Example.App
             string PFKeys = "PF3 Exit    PF4 Color Demo    PF5 Highlight Demo    PF6 Form Demo";
 
             Screen FormScreen = new Screen();
-            FormScreen.Fields = new List<Field>()
-            {
-                new Field() {Row = 1, Column = 28, Contents = "3270 Example Application", Intensity=true},
-                new Field() {Row = 3, Column = 1, Contents = "Welcome to the TN3270 form demo screen. Please enter your name."},
-                new Field() {Row = 5, Column = 1, Contents = "First Name  . . ."},
-                new Field() {Row = 5, Column = 20, Name="fname", Write=true, Highlighting=Highlight.Underscore},
-                new Field() {Row = 5, Column = 41}, // "EOF
-                new Field() {Row = 6, Column = 1, Contents = "Last Name . . . ."},
-                new Field() {Row = 6, Column = 20, Name="lname", Write=true, Highlighting=Highlight.Underscore},
-                new Field() {Row = 6, Column = 41 }, // "EOF"
-                new Field() {Row = 7, Column = 1, Contents="Password  . . . ."},
-                new Field() {Row = 7, Column = 20, Name="password", Write=true, Highlighting=Highlight.Underscore, Hidden=true },
-                new Field() {Row = 7, Column = 41}, // "EOF"
-                new Field() {Row = 9, Column = 1, Contents="Press"},
-                new Field() {Row = 9, Column = 7, Contents="ENTER", Intensity=true},
-                new Field() {Row = 9, Column = 13, Contents="to submit your name."},
-                new Field() {Row = 11, Column = 1, Intensity = true, Color = Colors.Red, Name="errormsg"},
-                new Field() {Row = 23, Column = 1, Contents=PFKeys}
-            };
+            FormScreen.AddText(1,28,"3270 Example Application",true);
+            FormScreen.AddText(3,1,"Welcome to the TN3270 form demo screen. Please enter your name.");
+            FormScreen.AddText(5,1,"First Name  . . .");
+            FormScreen.AddInput(5, 20, "fname");
+            FormScreen.AddEOF(5, 41);
+            FormScreen.AddText(6,1,"Last Name . . . .");
+            FormScreen.AddInput(6,20,"lname");
+            FormScreen.AddEOF(6, 41);
+            FormScreen.AddText(7,1,"Password  . . . .");
+            FormScreen.AddInput(7,20,"password", true);
+            FormScreen.AddEOF(7, 41);
+            FormScreen.AddText(9,1,"Press");
+            FormScreen.AddText(9,7,"ENTER", true);
+            FormScreen.AddText(9,13,"to submit your name.");
+            FormScreen.AddText(11,1,"errormsg", "",true, Colors.Red);
+            FormScreen.AddText(23, 1, PFKeys);
             FormScreen.InitialCursorPosition = (5, 21);
 
             Screen FormScreenInside = new Screen();

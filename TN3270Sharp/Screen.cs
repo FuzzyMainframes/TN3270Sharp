@@ -29,17 +29,75 @@
  * 
  */
 
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TN3270Sharp
 {
     public class Screen
     {
         public string Name { get; set; }
-        public List<Field> Fields { get; set; }
+        public List<Field> Fields { get; set; } = new List<Field>();
         public (int column, int row) InitialCursorPosition { get; set; } = (1, 1);
+                
+        /// <summary>
+        /// Creates new field and adds the result to this screen.
+        /// </summary>
+        /// <param name="row">x position, counted top to bottom starting with 1</param>
+        /// <param name="column">y position, counted left to right starting with 1</param>
+        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
+        public void AddText(int row, int column, string name, string contents, bool intensity = false, Colors color = Colors.DefaultColor, byte highlighting = Highlight.DefaultHighlight)
+            => Fields.Add(new Field
+            {
+                Column = column,
+                Row = row,
+                Name = name,
+                Contents = contents,
+                Intensity = intensity,
+                Highlighting = highlighting,
+                Color = color,
+            });
+        
+        /// <summary>
+        /// Creates new field and adds the result to this screen.
+        /// </summary>
+        /// <param name="row">x position, counted top to bottom starting with 1</param>
+        /// <param name="column">y position, counted left to right starting with 1</param>
+        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
+        public void AddText(int row, int column, string contents, bool intensity = false, Colors color = Colors.DefaultColor, byte highlighting = Highlight.DefaultHighlight)
+            => AddText(row, column, null, contents, intensity, color, highlighting);
+        
+        /// <summary>
+        /// Creates new field and adds the result to this screen.
+        /// </summary>
+        /// <param name="row">x position, counted top to bottom starting with 1</param>
+        /// <param name="column">y position, counted left to right starting with 1</param>
+        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
+        public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true)
+            => Fields.Add(new Field
+            {
+                Column = column,
+                Row = row,
+                Name = name,
+                Write = write,
+                Highlighting = underscore
+                ? Highlight.Underscore
+                : Highlight.DefaultHighlight,
+                Hidden = hidden,
+            });
 
+        /// <summary>
+        /// Creates new field and adds the result to this screen. <br/>
+        /// This is intended to reduce the length of an input field.
+        /// </summary>
+        /// <param name="row">x position, counted top to bottom starting with 1</param>
+        /// <param name="column">y position, counted left to right starting with 1</param>
+        /// <param name="highlighting">intended to pass Highlight</param>
+        public void AddEOF(int row, int column) => Fields.Add(new Field
+        {
+            Column = column,
+            Row = row,
+        });
 
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
