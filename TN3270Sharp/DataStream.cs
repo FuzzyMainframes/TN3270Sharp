@@ -30,29 +30,30 @@
  */
 
 
+using System.IO;
 using System.Net.Sockets;
 
 namespace TN3270Sharp
 {
     public static class DataStream
     {
-        public static void EraseWrite(NetworkStream stream)
+        public static void EraseWrite(Stream stream)
         {
             stream.Write(new byte[] { (byte)ControlChars.EraseWrite });
         }
 
-        public static void IC(NetworkStream stream)
+        public static void IC(Stream stream)
         {
             stream.Write(new byte[] { (byte)ControlChars.IC });
         }
 
-        public static void SF(NetworkStream stream, byte attributeChar)
+        public static void SF(Stream stream, byte attributeChar)
         {
             byte[] result = new byte[] { (byte)ControlChars.SF, attributeChar };
             stream.Write(result);
         }
 
-        public static void SFE(NetworkStream stream, byte numOfTypeValuePairs, params byte[] typeValues)
+        public static void SFE(Stream stream, byte numOfTypeValuePairs, params byte[] typeValues)
         {
             var result = new byte[(numOfTypeValuePairs * 2) + 2];
             result[0] = (byte)ControlChars.SFE;
@@ -61,7 +62,7 @@ namespace TN3270Sharp
             stream.Write(result);
         }
 
-        public static void SBA(NetworkStream stream, int row, int col)
+        public static void SBA(Stream stream, int row, int col)
         {
             var pos = Utils.GetPosition(row, col);
             byte[] result = new byte[] { (byte)ControlChars.SBA, pos[0], pos[1] };

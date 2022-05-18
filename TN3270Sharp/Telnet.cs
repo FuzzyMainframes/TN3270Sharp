@@ -29,6 +29,7 @@
  * 
  */
 using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace TN3270Sharp
@@ -36,7 +37,7 @@ namespace TN3270Sharp
     public class Telnet : IDisposable
     {
         protected TcpClient TcpClient { get; }
-        protected NetworkStream NetworkStream { get; }
+        protected Stream NetworkStream { get; }
         protected byte[] BufferBytes { get; set; }
         protected int TotalBytesReadFromBuffer { get; set; } = 0;
         protected bool ConnectionClosed { get; private set; } = false;
@@ -48,7 +49,7 @@ namespace TN3270Sharp
             SubNegotiation = 2
         }
 
-        public Telnet(TcpClient tcpClient, NetworkStream networkStream)
+        public Telnet(TcpClient tcpClient, Stream networkStream)
         {
             TcpClient = tcpClient;
             NetworkStream = networkStream;
