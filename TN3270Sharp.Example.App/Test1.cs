@@ -177,6 +177,7 @@ namespace TN3270Sharp.Example.App
                 new Field() {Row = 11, Column = 1, Intensity = true, Color = Colors.Red, Name="errormsg"},
                 new Field() {Row = 23, Column = 1, Contents=PFKeys}
             };
+            FormScreen.InitialCursorPosition = (5, 21);
 
             Screen FormScreenInside = new Screen();
             FormScreenInside.Fields = new List<Field>()

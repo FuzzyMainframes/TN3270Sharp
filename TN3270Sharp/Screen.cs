@@ -38,6 +38,7 @@ namespace TN3270Sharp
     {
         public string Name { get; set; }
         public List<Field> Fields { get; set; }
+        public (int column, int row) InitialCursorPosition { get; set; } = (1, 1);
 
 
         // Adapted from https://github.com/racingmars/go3270/blob/master/screen.go
