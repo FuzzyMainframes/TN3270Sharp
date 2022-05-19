@@ -30,8 +30,11 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace TN3270Sharp
 {
@@ -72,20 +75,34 @@ namespace TN3270Sharp
 
         public void Negotiate()
         {
+            // RFC 1576
+            // This is no proper negotiation, but at least it checks if the client is compatible and responds as expected.
             WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE);
-            _ = ReadFromStream();
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.TERMINAL_TYPE);
 
             WriteToStream(TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, TelnetCommands.IAC, TelnetCommands.SE);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x0);
             _ = ReadFromStream();
+            // buffer now contains the terminal type (RFC1340) followed by IAC SE
+            var terminalType = new List<byte>();
+            for (int i = 0; i < BufferBytes.Length; i++)
+            {
+                if (BufferBytes[i] != TelnetCommands.IAC || BufferBytes[i + 1] != TelnetCommands.SE)
+                    continue;
+                for (int j = 0; j < i; j++)        
+                    terminalType.Add(BufferBytes[j]);
+                break;
+            }
+            var terminalTypeString = System.Text.Encoding.ASCII.GetString(terminalType.ToArray());
 
             WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR);
-            _ = ReadFromStream();
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR);
 
             WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY);
-            _ = ReadFromStream();
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY);
 
             WriteToStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY);
-            _ = ReadFromStream();
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY);
         }
 
         public void UnNegotiate()
@@ -103,6 +120,13 @@ namespace TN3270Sharp
             _ = ReadFromStream();
         }
 
+        protected void ExpectFromStream(params byte[] data)
+        {
+            var result = new byte[data.Length];
+            _ = Stream.Read(result, 0, result.Length);
+            if (data.Equals(result))
+                throw new Exception();
+        }
         protected int ReadFromStream() => Stream.Read(BufferBytes, 0, BufferBytes.Length);
         protected void WriteToStream(params byte[] data) => Stream.Write(data);
 
