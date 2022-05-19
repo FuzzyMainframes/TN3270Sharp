@@ -139,7 +139,7 @@ namespace TN3270Sharp
         }
 
         public void SendScreen(Screen screen) 
-            => SendScreen(screen, screen.InitialCursorPosition.column, screen.InitialCursorPosition.row);
+            => SendScreen(screen, screen.InitialCursorPosition.row, screen.InitialCursorPosition.column);
 
         public void SendScreen(Screen screen, int row, int col)
         {
