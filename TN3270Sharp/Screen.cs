@@ -51,8 +51,7 @@ namespace TN3270Sharp
         /// </summary>
         /// <param name="row">x position, counted top to bottom starting with 1</param>
         /// <param name="column">y position, counted left to right starting with 1</param>
-        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
-        public void AddText(int row, int column, string name, string contents, bool intensity = false, Colors color = Colors.DefaultColor, byte highlighting = Highlight.DefaultHighlight)
+        public void AddText(int row, int column, string name, string contents, bool intensity = false, Colors color = Colors.DefaultColor, Highlight highlighting = Highlight.DefaultHighlight)
             => Fields.Add(new Field
             {
                 Column = column,
@@ -69,8 +68,7 @@ namespace TN3270Sharp
         /// </summary>
         /// <param name="row">x position, counted top to bottom starting with 1</param>
         /// <param name="column">y position, counted left to right starting with 1</param>
-        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
-        public void AddText(int row, int column, string contents, bool intensity = false, Colors color = Colors.DefaultColor, byte highlighting = Highlight.DefaultHighlight)
+        public void AddText(int row, int column, string contents, bool intensity = false, Colors color = Colors.DefaultColor, Highlight highlighting = Highlight.DefaultHighlight)
             => AddText(row, column, null, contents, intensity, color, highlighting);
         
         /// <summary>
@@ -78,7 +76,6 @@ namespace TN3270Sharp
         /// </summary>
         /// <param name="row">x position, counted top to bottom starting with 1</param>
         /// <param name="column">y position, counted left to right starting with 1</param>
-        /// <param name="highlighting">intended to pass Highlight</param> // TODO change this to enumeration
         public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true)
             => Fields.Add(new Field
             {
@@ -98,7 +95,6 @@ namespace TN3270Sharp
         /// </summary>
         /// <param name="row">x position, counted top to bottom starting with 1</param>
         /// <param name="column">y position, counted left to right starting with 1</param>
-        /// <param name="highlighting">intended to pass Highlight</param>
         public void AddEOF(int row, int column) => Fields.Add(new Field
         {
             Column = column,
@@ -151,7 +147,7 @@ namespace TN3270Sharp
             if (fld.Highlighting != Highlight.DefaultHighlight)
             {
                 buffer.Add(0x41);
-                buffer.Add(fld.Highlighting);
+                buffer.Add((byte)fld.Highlighting);
             }
 
             // Color attribute

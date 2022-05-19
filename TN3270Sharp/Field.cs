@@ -57,7 +57,7 @@ namespace TN3270Sharp
 
         // Highlighting is the highlight attribute for the field. The default value
         // is the default (i.e. no) highlighting.
-        public byte Highlighting { get; set; }
+        public Highlight Highlighting { get; set; }
 
         // Name is the name of this field, which is used to get the user-entered
         // data. All writeable fields on a screen must have a unique name.
@@ -88,11 +88,11 @@ namespace TN3270Sharp
     }
 
     // Constants for field highlighting
-    public static class Highlight
+    public enum Highlight
     {
-        public const byte DefaultHighlight = 0;
-        public const byte Blink = 0xf1;
-        public const byte ReverseVideo = 0xf2;
-        public const byte Underscore = 0xf4;
+        DefaultHighlight = 0,
+        Blink = 0xf1,
+        ReverseVideo = 0xf2,
+        Underscore = 0xf4,
     }
 }
