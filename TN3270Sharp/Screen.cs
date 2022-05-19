@@ -90,6 +90,20 @@ namespace TN3270Sharp
             });
 
         /// <summary>
+        /// Creates new field field and adds the result to this screen.
+        /// Then creates and adds a new EOF field to ensure the specified length.
+        /// </summary>
+        /// <param name="row">x position, counted top to bottom starting with 1</param>
+        /// <param name="column">y position, counted left to right starting with 1</param>
+        /// <param name="length">length of the desired field in characters</param>
+        public void AddInput(int row, int column, int length, string name, bool hidden = false, bool write = true,
+            bool underscore = true)
+        {
+            AddInput(row, column, name, hidden, write, underscore);
+            AddEOF(row, column + length + 1);
+        }
+
+        /// <summary>
         /// Creates new field and adds the result to this screen. <br/>
         /// This is intended to reduce the length of an input field.
         /// </summary>

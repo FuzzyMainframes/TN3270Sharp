@@ -153,8 +153,7 @@ namespace TN3270Sharp.Example.App
             FormScreen.AddText(1,28,"3270 Example Application",true);
             FormScreen.AddText(3,1,"Welcome to the TN3270 form demo screen. Please enter your name.");
             FormScreen.AddText(5,1,"First Name  . . .");
-            FormScreen.AddInput(5, 20, "fname");
-            FormScreen.AddEOF(5, 41);
+            FormScreen.AddInput(5, 20, 20, "fname");
             FormScreen.AddText(6,1,"Last Name . . . .");
             FormScreen.AddInput(6,20,"lname");
             FormScreen.AddEOF(6, 41);
