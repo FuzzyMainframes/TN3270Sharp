@@ -38,8 +38,7 @@ namespace TN3270Sharp
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license. 
         // codes are the 3270 control character I/O codes, pre-computed as provided
         // at http://www.tommysprinkle.com/mvs/P3270/iocodes.htm
-        public static byte[] IOCodes = new byte[]
-        {
+        public static byte[] IOCodes = {
             0x40, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8,
             0xc9, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0xd1, 0xd2, 0xd3, 0xd4,
             0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60,
@@ -52,8 +51,7 @@ namespace TN3270Sharp
         // Adapted from https://github.com/racingmars/go3270/blob/master/util.go
         // Copyright 2020 by Matthew R. Wilson, licensed under the MIT license.
         // decodes is the inverse of the above table; -1 is used in invalid positions
-        public static int[] IODecodes = new int[]
-        {
+        public static int[] IODecodes = {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -77,10 +75,10 @@ namespace TN3270Sharp
         // Borrowed from racingmars/go3270
         public static byte[] GetPosition(int row, int col)
         {
-            byte[] result = new byte[2];
-            int address = (row - 1) * 80 + (col - 1);
-            int hi = (address & 0xfc0) >> 6;
-            int lo = address & 0x3f;
+            var result = new byte[2];
+            var address = (row - 1) * 80 + (col - 1);
+            var hi = (address & 0xfc0) >> 6;
+            var lo = address & 0x3f;
             result[0] = IOCodes[hi];
             result[1] = IOCodes[lo];
             return result;

@@ -68,12 +68,12 @@ namespace TN3270Sharp
             
             while (!breakCondition())
             {
-                TcpClient client = server.AcceptTcpClient();
+                var client = server.AcceptTcpClient();
                 new Thread(() =>
                 {
                     whenHasNewConnection();
 
-                    using (Tn3270ConnectionHandler tn3270ConnectionHandler = new Tn3270ConnectionHandler(client))
+                    using (var tn3270ConnectionHandler = new Tn3270ConnectionHandler(client))
                     {
                         tn3270ConnectionHandler.NegotiateTelnet();
                         handleConnectionAction(tn3270ConnectionHandler);

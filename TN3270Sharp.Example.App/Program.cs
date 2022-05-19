@@ -45,7 +45,7 @@ namespace TN3270Sharp.Example.App
             Console.WriteLine("TN3270Sharp Demo Server started and listening on 0.0.0.0 port 3270");
             Console.WriteLine("Control+C to exit...\n\n");
 
-            Test1 test1 = new Test1();
+            var test1 = new Test1();
             test1.CreateServer();
         }
     }

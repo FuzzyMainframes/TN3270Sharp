@@ -31,7 +31,6 @@
 
 
 using System.IO;
-using System.Net.Sockets;
 
 namespace TN3270Sharp
 {
@@ -39,17 +38,17 @@ namespace TN3270Sharp
     {
         public static void EraseWrite(Stream stream)
         {
-            stream.Write(new byte[] { (byte)ControlChars.EraseWrite });
+            stream.Write(new[] { (byte)ControlChars.EraseWrite });
         }
 
         public static void IC(Stream stream)
         {
-            stream.Write(new byte[] { (byte)ControlChars.IC });
+            stream.Write(new[] { (byte)ControlChars.IC });
         }
 
         public static void SF(Stream stream, byte attributeChar)
         {
-            byte[] result = new byte[] { (byte)ControlChars.SF, attributeChar };
+            byte[] result = { (byte)ControlChars.SF, attributeChar };
             stream.Write(result);
         }
 
@@ -65,7 +64,7 @@ namespace TN3270Sharp
         public static void SBA(Stream stream, int row, int col)
         {
             var pos = Utils.GetPosition(row, col);
-            byte[] result = new byte[] { (byte)ControlChars.SBA, pos[0], pos[1] };
+            byte[] result = { (byte)ControlChars.SBA, pos[0], pos[1] };
             stream.Write(result);
         }
     }

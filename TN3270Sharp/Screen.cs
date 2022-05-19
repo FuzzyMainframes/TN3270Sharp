@@ -37,9 +37,15 @@ namespace TN3270Sharp
     public class Screen
     {
         public string Name { get; set; }
-        public List<Field> Fields { get; set; } = new List<Field>();
-        public (int column, int row) InitialCursorPosition { get; set; } = (1, 1);
-                
+        public List<Field> Fields { get; set; }
+        public (int column, int row) InitialCursorPosition { get; set; }
+
+        public Screen()
+        {
+            Fields = new List<Field>();
+            InitialCursorPosition = (1, 1);
+        }
+
         /// <summary>
         /// Creates new field and adds the result to this screen.
         /// </summary>
@@ -108,22 +114,22 @@ namespace TN3270Sharp
         // licened under the MIT license.
         public byte[] BuildField(Field fld)
         {
-            List<byte> buffer = new List<byte>();
+            var buffer = new List<byte>();
             if (fld.Color == Colors.DefaultColor && fld.Highlighting == Highlight.DefaultHighlight)
             {
                 // We can use a simple SF
                 buffer.Add((byte)ControlChars.SF);
                 buffer.Add((byte)(
-                    (fld.Write == true ? AttribChar.Unprotected : AttribChar.Protected) |
-                    (fld.Intensity == true ? AttribChar.Intensity : AttribChar.Normal) |
-                    (fld.Hidden == true ? AttribChar.Hidden : AttribChar.Normal)
+                    (fld.Write ? AttribChar.Unprotected : AttribChar.Protected) |
+                    (fld.Intensity ? AttribChar.Intensity : AttribChar.Normal) |
+                    (fld.Hidden ? AttribChar.Hidden : AttribChar.Normal)
                     ));
                 return buffer.ToArray();
             }
 
             // otherwise we need to use SFE (SF Extended)
             buffer.Add((byte)ControlChars.SFE);
-            int paramCount = 1;
+            var paramCount = 1;
 
             if (fld.Color != Colors.DefaultColor)
                 paramCount++;
@@ -136,9 +142,9 @@ namespace TN3270Sharp
             // Basic field attribute
             buffer.Add(0xc0);
             buffer.Add((byte)(
-                (fld.Write == true ? AttribChar.Unprotected : AttribChar.Protected) |
-                (fld.Intensity == true ? AttribChar.Intensity : AttribChar.Normal) |
-                (fld.Hidden == true ? AttribChar.Hidden : AttribChar.Normal)
+                (fld.Write ? AttribChar.Unprotected : AttribChar.Protected) |
+                (fld.Intensity ? AttribChar.Intensity : AttribChar.Normal) |
+                (fld.Hidden ? AttribChar.Hidden : AttribChar.Normal)
                 ));
 
             // Highlighting Attribute
@@ -159,16 +165,14 @@ namespace TN3270Sharp
 
         public string GetFieldData(string fieldName)
         {
-            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
-            if (field == null)
-                return null;
+            var field = Fields.FirstOrDefault(x => x.Name == fieldName);
 
-            return field.Contents;
+            return field?.Contents;
         }
 
         public void SetFieldValue(int row, int col, string data)
         {
-            var field = Fields.Where(x => x.Row == row && x.Column == col).FirstOrDefault();
+            var field = Fields.FirstOrDefault(x => x.Row == row && x.Column == col);
             if (field == null)
                 return;
 
@@ -177,7 +181,7 @@ namespace TN3270Sharp
 
         public void SetFieldValue(string fieldName, string fieldData)
         {
-            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
+            var field = Fields.FirstOrDefault(x => x.Name == fieldName);
             if (field == null)
                 return;
 
@@ -186,7 +190,7 @@ namespace TN3270Sharp
 
         public void ClearFieldValue(string fieldName)
         {
-            var field = Fields.Where(x => x.Name == fieldName).FirstOrDefault();
+            var field = Fields.FirstOrDefault(x => x.Name == fieldName);
             if (field == null)
                 return;
 

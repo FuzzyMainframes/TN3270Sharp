@@ -69,8 +69,8 @@ namespace TN3270Sharp
 
         public Field(int row, int col)
         {
-            this.Row = row;
-            this.Column = col;
+            Row = row;
+            Column = col;
         }
     }
 
