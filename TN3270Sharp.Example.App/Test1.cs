@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace TN3270Sharp.Example.App
 {
@@ -55,7 +56,6 @@ namespace TN3270Sharp.Example.App
 
             var tn3270Server = new Tn3270Server(3270);
             tn3270Server.StartListener(
-                closeServerFunction,
                 () => ConsoleColor.Green.WriteLine("New connection..."),
                 () => ConsoleColor.Yellow.WriteLine("Closed connection..."),
                 tn3270ConnectionHandler =>
@@ -142,7 +142,8 @@ namespace TN3270Sharp.Example.App
                     //        tn3270ConnectionHandler.ShowScreen(screens[ProgramScreen.FormScreenInside]);
                     //    }
                     //});
-                });
+                },
+                CancellationToken.None);
         }
 
         private Dictionary<ProgramScreen, Screen> DefineScreens()

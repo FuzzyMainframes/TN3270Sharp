@@ -61,12 +61,12 @@ namespace TN3270Sharp
             Ebcdic.SetEbcdicEncoding(defaultEbcdicEncoding);
         }
 
-        public void StartListener(Func<bool> breakCondition, Action whenHasNewConnection, Action whenConnectionIsClosed, Action<ITn3270ConnectionHandler> handleConnectionAction)
+        public void StartListener(Action whenHasNewConnection, Action whenConnectionIsClosed, Action<ITn3270ConnectionHandler> handleConnectionAction, CancellationToken cancellationToken)
         {
             var server = new TcpListener(IPAddress.Parse(IpAddress), Port);
             server.Start();
             
-            while (!breakCondition())
+            while (!cancellationToken.IsCancellationRequested)
             {
                 var client = server.AcceptTcpClient();
                 new Thread(() =>
@@ -80,7 +80,7 @@ namespace TN3270Sharp
                     }
 
                     whenConnectionIsClosed();
-                }).Start();
+                }).Start(cancellationToken);
             }
 
             server.Stop();
