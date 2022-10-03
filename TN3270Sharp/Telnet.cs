@@ -28,100 +28,129 @@
  * SOFTWARE.
  * 
  */
+
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace TN3270Sharp
 {
     public class Telnet : IDisposable
     {
         protected TcpClient TcpClient { get; }
-        protected NetworkStream NetworkStream { get; }
+        protected Stream Stream { get; }
         protected byte[] BufferBytes { get; set; }
-        protected int TotalBytesReadFromBuffer { get; set; } = 0;
-        protected bool ConnectionClosed { get; private set; } = false;
+        protected int TotalBytesReadFromBuffer { get; set; }
+        protected bool ConnectionClosed { get; private set; }
 
-        private enum TelnetState : int
+        private enum TelnetState
         {
             Normal = 0,
             Command = 1,
             SubNegotiation = 2
         }
 
-        public Telnet(TcpClient tcpClient, NetworkStream networkStream)
+        public Telnet(TcpClient tcpClient, Stream stream)
         {
             TcpClient = tcpClient;
-            NetworkStream = networkStream;
+            Stream = stream;
 
             BufferBytes = new byte[256];
+            TotalBytesReadFromBuffer = 0;
+            ConnectionClosed = false;
         }
 
         public void CloseConnection()
         {
-            if (ConnectionClosed == false)
-            {
-                NetworkStream.Close();
-                TcpClient.Close();
-                ConnectionClosed = true;
-            }
+            if (ConnectionClosed)
+                return;
+
+            Stream.Close();
+            TcpClient.Close();
+            ConnectionClosed = true;
         }
 
         public void Negotiate()
         {
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE });
-            var x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            // RFC 1576
+            // This is no proper negotiation, but at least it checks if the client is compatible and responds as expected.
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.TERMINAL_TYPE);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.TERMINAL_TYPE);
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, TelnetCommands.IAC, TelnetCommands.SE });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x01, TelnetCommands.IAC, TelnetCommands.SE);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.SB, TelnetCommands.TERMINAL_TYPE, 0x0);
+            _ = ReadFromStream();
+            // buffer now contains the terminal type (RFC1340) followed by IAC SE
+            var terminalType = new List<byte>();
+            for (int i = 0; i < BufferBytes.Length; i++)
+            {
+                if (BufferBytes[i] != TelnetCommands.IAC || BufferBytes[i + 1] != TelnetCommands.SE)
+                    continue;
+                for (int j = 0; j < i; j++)        
+                    terminalType.Add(BufferBytes[j]);
+                break;
+            }
+            var terminalTypeString = System.Text.Encoding.ASCII.GetString(terminalType.ToArray());
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR);
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY);
 
-            NetworkStream.Write(new Byte[] { TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.WILL, TelnetCommands.BINARY);
+            ExpectFromStream(TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.EOR, TelnetCommands.IAC, TelnetCommands.DO, TelnetCommands.BINARY);
         }
 
         public void UnNegotiate()
         {
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.BINARY });
-            var x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.IAC, TelnetCommands.WONT, TelnetCommands.BINARY);
+            _ = ReadFromStream();
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.BINARY });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.BINARY);
+            _ = ReadFromStream();
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.EOR });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.EOR);
+            _ = ReadFromStream();
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.TERMINAL_TYPE });
-            x = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length);
+            WriteToStream(TelnetCommands.IAC, TelnetCommands.DONT, TelnetCommands.TERMINAL_TYPE);
+            _ = ReadFromStream();
         }
+
+        protected void ExpectFromStream(params byte[] data)
+        {
+            var result = new byte[data.Length];
+            _ = Stream.Read(result, 0, result.Length);
+            if (data.Equals(result))
+                throw new Exception();
+        }
+        protected int ReadFromStream() => Stream.Read(BufferBytes, 0, BufferBytes.Length);
+        protected void WriteToStream(params byte[] data) => Stream.Write(data);
 
         public void Read(Action<byte[]> action)
         {
-            while (ConnectionClosed == false && (TotalBytesReadFromBuffer = NetworkStream.Read(BufferBytes, 0, BufferBytes.Length)) != 0)
+            while (ConnectionClosed == false && (TotalBytesReadFromBuffer = ReadFromStream()) != 0)
             {
                 action(BufferBytes);
             }
         }
 
-        public void SendScreen(Screen screen)
-        {
-            SendScreen(screen, 1, 1);
-        }
+        public void SendScreen(Screen screen) 
+            => SendScreen(screen, screen.InitialCursorPosition.row, screen.InitialCursorPosition.column);
 
         public void SendScreen(Screen screen, int row, int col)
         {
-            DataStream.EraseWrite(NetworkStream);
-            NetworkStream.Write(new byte[] { (byte)ControlChars.WCCdefault });
+            DataStream.EraseWrite(Stream);
+            WriteToStream((byte)ControlChars.WCCdefault);
 
-            foreach (Field fld in screen.Fields)
+            foreach (var fld in screen.Fields)
             {
                 // tell the terminal where to draw field
-                DataStream.SBA(NetworkStream, fld.Row, fld.Column);
-                NetworkStream.Write(screen.BuildField(fld));
+                DataStream.SBA(Stream, fld.Row, fld.Column);
+                WriteToStream(screen.BuildField(fld));
 
                 var content = fld.Contents;
                 if (fld.Name != "")
@@ -129,18 +158,15 @@ namespace TN3270Sharp
                     // TODO
                 }
 
-                if (content != null && content.Length > 0)
-                    NetworkStream.Write(Ebcdic.ASCIItoEBCDIC(content));
+                if (!string.IsNullOrEmpty(content))
+                    WriteToStream(Ebcdic.ASCIItoEBCDIC(content));
             }
-            DataStream.SBA(NetworkStream, row, col);
-            DataStream.IC(NetworkStream);
+            DataStream.SBA(Stream, row, col);
+            DataStream.IC(Stream);
 
-            NetworkStream.Write(new byte[] { TelnetCommands.IAC, 0xef });
+            WriteToStream(TelnetCommands.IAC, 0xef);
         }
 
-        public void Dispose()
-        {
-            CloseConnection();
-        }
+        public void Dispose() => CloseConnection();
     }
 }

@@ -61,8 +61,8 @@ namespace TN3270Sharp
 
             var address = hi | lo;
 
-            int nRow = (address % 80);
-            int nCol = ((address - nRow) / 80);
+            var nRow = (address % 80);
+            var nCol = ((address - nRow) / 80);
 
             return new Tuple<int, int>(nCol, nRow);
         }
@@ -73,7 +73,7 @@ namespace TN3270Sharp
             var fieldBytes = new List<byte>();
             Tuple<int, int> fieldPosition = null;
 
-            for (int i = 0; i < BufferBytes.Length; i++)
+            for (var i = 0; i < BufferBytes.Length; i++)
             {
                 var b = BufferBytes[i];
                 if (b == 0xff)
@@ -95,7 +95,7 @@ namespace TN3270Sharp
                 }
                 if(b == 0x11) 
                 {
-                    if (inField == true && fieldPosition != null)
+                    if (inField && fieldPosition != null)
                     {
                         var data = Ebcdic.EBCDICtoASCII(fieldBytes.ToArray());
 

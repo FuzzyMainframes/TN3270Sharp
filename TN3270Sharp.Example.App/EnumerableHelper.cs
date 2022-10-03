@@ -41,7 +41,7 @@ namespace TN3270Sharp.Example.App
             if (source == null) throw new ArgumentNullException("source");
             if (action == null) throw new ArgumentNullException("action");
 
-            foreach (T item in source)
+            foreach (var item in source)
             {
                 action(item);
             }
@@ -52,8 +52,8 @@ namespace TN3270Sharp.Example.App
             if (source == null) throw new ArgumentNullException("source");
             if (action == null) throw new ArgumentNullException("action");
 
-            int index = 0;
-            foreach (T item in source)
+            var index = 0;
+            foreach (var item in source)
             {
                 action(item, index);
                 index++;

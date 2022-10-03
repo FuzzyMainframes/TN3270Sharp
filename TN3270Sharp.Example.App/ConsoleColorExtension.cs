@@ -50,7 +50,7 @@ namespace TN3270Sharp.Example.App
             var originalForegroundColor = Console.ForegroundColor;
 
             Console.ForegroundColor = foregroundColor;
-            Console.WriteLine(String.Format(value, paramArray));
+            Console.WriteLine(value, paramArray);
 
             Console.ForegroundColor = originalForegroundColor;
         }
