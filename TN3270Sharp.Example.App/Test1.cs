@@ -63,8 +63,8 @@ namespace TN3270Sharp.Example.App
                     var screens = DefineScreens();
 
                     // Screens Actions
-                    Action<AID> formScreenAction = null;
-                    Action<AID> formScreenInsideAction = null;
+                    Action<AID>? formScreenAction = null;
+                    Action<AID>? formScreenInsideAction = null;
 
                     formScreenAction = aidReceived =>
                     {
@@ -75,7 +75,7 @@ namespace TN3270Sharp.Example.App
                             var password = screens[ProgramScreen.FormScreen].GetFieldData("password");
 
                             // Check for errors...
-                            string errorMessage = null;
+                            string? errorMessage = null;
                             if (string.IsNullOrWhiteSpace(fName))
                                 errorMessage = "First Name field is required.";  
                             else if (string.IsNullOrWhiteSpace(lName))

@@ -6,7 +6,7 @@
  * 
  * MIT License
  * 
- * Copyright (c) 2020-2021 by Robert J. Lawrence (roblthegreat) and other
+ * Copyright (c) 2020, 2021, 2022 by Robert J. Lawrence (roblthegreat) and other
  * TN3270Sharp contributors.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy

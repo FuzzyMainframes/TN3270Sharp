@@ -1,6 +1,6 @@
 [![.NET](https://github.com/FuzzyMainframes/TN3270Sharp/actions/workflows/dotnet.yml/badge.svg)](https://github.com/FuzzyMainframes/TN3270Sharp/actions/workflows/dotnet.yml)
 
-# TN3270Sharp - 3270 Server Library for DotNetCore / C#
+# TN3270Sharp - 3270 Server Library for .NET 6 / C#
  a .net library to write applications/servers with C# that use TN3270 clients
 
 ## Inspiration
@@ -14,20 +14,22 @@ I have borrowed / adapted some code from [racingmars/go3270](https://github.com/
 
 I want to thank [bencz](https://github.com/bencz) for major contribution, including a new implementation of the TN3270 Connection Handler.
 
+I also wish to thank [M4xAmmo](https://github.com/M4xAmmo) for contributions including: changable cursor position; factory methods to create fields; checking the terminals responses on negotiation instead of ignoring them; and some general code cleanup.
+
 ## Status
 This project is still very early in development and is **not suitable** for use any project beyond experimentation. There is most certainly bugs and missing features.  The API will also likely change many times before it is declared ready for any realworld use.
 
 ***THIS CODE IS UNSTABLE. USE AT YOUR OWN RISK.***
 
 ## Requirements
-This will run on any machine support by Microsoft dotnetcore 3.1+.
+This should run on any machine support by Microsoft .NET 6.
 This includes:
 * Linux (x64, ARM32, ARM64) - This also includes Raspberry Pi 3 & 4.
 * macOS (x64)
 * Microsoft Windows (x86, x64)
 
 ## How to use
-* Install [.NET Core 3.1+](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+* Install [.NET 6](https://dotnet.microsoft.com/download/), the latest LTS version.
 * Clone the repo
 * Type the following in the shell
 
@@ -51,3 +53,4 @@ Pull requests and bug reports are welcome.
 ## Contributors
 * [roblthegreat](https://github.com/roblthegreat) 
 * [bencz](https://github.com/bencz)
+* [M4xAmmo](https://github.com/M4xAmmo)
