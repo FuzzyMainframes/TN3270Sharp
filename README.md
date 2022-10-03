@@ -25,7 +25,7 @@ This project is still very early in development and is **not suitable** for use 
 This should run on any machine support by Microsoft .NET 6.
 This includes:
 * Linux (x64, ARM32, ARM64) - This also includes Raspberry Pi 3 & 4.
-* macOS (x64)
+* macOS (x64, Apple Silicon)
 * Microsoft Windows (x86, x64)
 
 ## How to use
