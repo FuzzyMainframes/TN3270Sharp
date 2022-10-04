@@ -29,43 +29,38 @@
  * 
  */
 
-
-using System.IO;
-
-namespace TN3270Sharp
+namespace TN3270Sharp;
+public static class DataStream
 {
-    public static class DataStream
+    public static void EraseWrite(Stream stream)
     {
-        public static void EraseWrite(Stream stream)
-        {
-            stream.Write(new[] { (byte)ControlChars.EraseWrite });
-        }
+        stream.Write(new[] { (byte)ControlChars.EraseWrite });
+    }
 
-        public static void IC(Stream stream)
-        {
-            stream.Write(new[] { (byte)ControlChars.IC });
-        }
+    public static void IC(Stream stream)
+    {
+        stream.Write(new[] { (byte)ControlChars.IC });
+    }
 
-        public static void SF(Stream stream, byte attributeChar)
-        {
-            byte[] result = { (byte)ControlChars.SF, attributeChar };
-            stream.Write(result);
-        }
+    public static void SF(Stream stream, byte attributeChar)
+    {
+        byte[] result = { (byte)ControlChars.SF, attributeChar };
+        stream.Write(result);
+    }
 
-        public static void SFE(Stream stream, byte numOfTypeValuePairs, params byte[] typeValues)
-        {
-            var result = new byte[(numOfTypeValuePairs * 2) + 2];
-            result[0] = (byte)ControlChars.SFE;
-            result[1] = numOfTypeValuePairs;
-            typeValues.CopyTo(result, 2);
-            stream.Write(result);
-        }
+    public static void SFE(Stream stream, byte numOfTypeValuePairs, params byte[] typeValues)
+    {
+        var result = new byte[(numOfTypeValuePairs * 2) + 2];
+        result[0] = (byte)ControlChars.SFE;
+        result[1] = numOfTypeValuePairs;
+        typeValues.CopyTo(result, 2);
+        stream.Write(result);
+    }
 
-        public static void SBA(Stream stream, int row, int col)
-        {
-            var pos = Utils.GetPosition(row, col);
-            byte[] result = { (byte)ControlChars.SBA, pos[0], pos[1] };
-            stream.Write(result);
-        }
+    public static void SBA(Stream stream, int row, int col)
+    {
+        var pos = Utils.GetPosition(row, col);
+        byte[] result = { (byte)ControlChars.SBA, pos[0], pos[1] };
+        stream.Write(result);
     }
 }

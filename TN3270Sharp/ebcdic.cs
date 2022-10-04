@@ -32,31 +32,29 @@
 
 using System.Text;
 
-namespace TN3270Sharp
+namespace TN3270Sharp;
+public static class Ebcdic
 {
-    public static class Ebcdic
+    private static Encoding AsciiEncoding { get; } = Encoding.ASCII;
+    private static Encoding EbcdicEncoding { get; set; }
+
+    public static void SetEbcdicEncoding(string encoding)
     {
-        private static Encoding AsciiEncoding { get; } = Encoding.ASCII;
-        private static Encoding EbcdicEncoding { get; set; }
+        EbcdicEncoding = Encoding.GetEncoding(encoding);
+    }
 
-        public static void SetEbcdicEncoding(string encoding)
-        {
-            EbcdicEncoding = Encoding.GetEncoding(encoding);
-        }
+    public static byte[] ASCIItoEBCDIC(string asciiString)
+    {         
+        return Encoding.Convert(AsciiEncoding, EbcdicEncoding, AsciiEncoding.GetBytes(asciiString));
+    }
 
-        public static byte[] ASCIItoEBCDIC(string asciiString)
-        {         
-            return Encoding.Convert(AsciiEncoding, EbcdicEncoding, AsciiEncoding.GetBytes(asciiString));
-        }
+    public static string EBCDICtoASCII(byte[] ebcdicString)
+    {  
+        return Encoding.ASCII.GetString(Encoding.Convert(EbcdicEncoding, AsciiEncoding, ebcdicString));
+    }
 
-        public static string EBCDICtoASCII(byte[] ebcdicString)
-        {  
-            return Encoding.ASCII.GetString(Encoding.Convert(EbcdicEncoding, AsciiEncoding, ebcdicString));
-        }
-
-        public static byte[] EBCDICtoASCII(string ebcdicString)
-        {
-            return Encoding.Convert(EbcdicEncoding, AsciiEncoding, EbcdicEncoding.GetBytes(ebcdicString));
-        }
+    public static byte[] EBCDICtoASCII(string ebcdicString)
+    {
+        return Encoding.Convert(EbcdicEncoding, AsciiEncoding, EbcdicEncoding.GetBytes(ebcdicString));
     }
 }
