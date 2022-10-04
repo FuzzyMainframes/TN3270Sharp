@@ -38,7 +38,7 @@ namespace TN3270Sharp
     {
         public string Name { get; set; }
         public List<Field> Fields { get; set; }
-        public (int column, int row) InitialCursorPosition { get; set; }
+        public (int row , int column) InitialCursorPosition { get; set; }
 
         public Screen()
         {
