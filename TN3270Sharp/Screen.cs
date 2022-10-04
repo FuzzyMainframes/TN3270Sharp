@@ -146,7 +146,7 @@ public class Screen
     // GetPosition translates row and col to buffer address control characters.
     // Borrowed from racingmars/go3270
     //
-    // C#-ification and further changes are Copyright 20200 by Robert J. Lawrence (roblthegreat)
+    // C#-ification and further changes are Copyright 2022 by Robert J. Lawrence (roblthegreat)
     // licened under the MIT license.
     public byte[] BuildField(Field fld)
     {
