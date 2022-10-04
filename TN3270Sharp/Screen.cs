@@ -29,6 +29,12 @@
  * 
  */
 
+
+/*
+ * This file includes several helper methods added by M4xAmmo to make adding fields
+ * a but more user friendly. Thanks!
+*/
+
 namespace TN3270Sharp;
 
 public class Screen
@@ -48,6 +54,13 @@ public class Screen
     /// </summary>
     /// <param name="row">x position, counted top to bottom starting with 1</param>
     /// <param name="column">y position, counted left to right starting with 1</param>
+    /// <param name="name">name</param>
+    /// <param name="contents">contents to be displayed</param>
+    /// <param name="intensity">Should text be display with intensity (true/false)</param>
+    /// <param name="color">text color</param>
+    /// <param name="highlight">highlight attribute</param>
+    /// <returns></returns>
+
     public void AddText(int row, int column, string name, string contents, bool intensity = false, Colors color = Colors.DefaultColor, Highlight highlighting = Highlight.DefaultHighlight)
         => Fields.Add(new Field
         {
@@ -65,6 +78,11 @@ public class Screen
     /// </summary>
     /// <param name="row">x position, counted top to bottom starting with 1</param>
     /// <param name="column">y position, counted left to right starting with 1</param>
+    /// <param name="contents">contents to be displayed</param>
+    /// <param name="intensity">Should text be display with intensity (true/false)</param>
+    /// <param name="color">text color</param>
+    /// <param name="highlight">highlight attribute</param>
+    /// <returns></returns>
     public void AddText(int row, int column, string contents, bool intensity = false, Colors color = Colors.DefaultColor, Highlight highlighting = Highlight.DefaultHighlight)
         => AddText(row, column, null, contents, intensity, color, highlighting);
     
@@ -73,7 +91,12 @@ public class Screen
     /// </summary>
     /// <param name="row">x position, counted top to bottom starting with 1</param>
     /// <param name="column">y position, counted left to right starting with 1</param>
-    public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true)
+    /// <param name="name">name</param>
+    /// <param name="hidden">text is hidden (i.e., password)</param>
+    /// <param name="write">is input field writable (true/false)</param>
+    /// <param name="underscore">should the input field be underscored (true/false)</param>
+    /// <returns></returns>
+        public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true)
         => Fields.Add(new Field
         {
             Column = column,
@@ -93,6 +116,11 @@ public class Screen
     /// <param name="row">x position, counted top to bottom starting with 1</param>
     /// <param name="column">y position, counted left to right starting with 1</param>
     /// <param name="length">length of the desired field in characters</param>
+    /// <param name="name">name</param>
+    /// <param name="hidden">text is hidden (i.e., password)</param>
+    /// <param name="write">is input field writable (true/false)</param>
+    /// <param name="underscore">should the input field be underscored (true/false)</param>
+    /// <returns></returns>
     public void AddInput(int row, int column, int length, string name, bool hidden = false, bool write = true,
         bool underscore = true)
     {
@@ -106,6 +134,7 @@ public class Screen
     /// </summary>
     /// <param name="row">x position, counted top to bottom starting with 1</param>
     /// <param name="column">y position, counted left to right starting with 1</param>
+    /// <returns></returns>
     public void AddEOF(int row, int column) => Fields.Add(new Field
     {
         Column = column,
@@ -117,7 +146,7 @@ public class Screen
     // GetPosition translates row and col to buffer address control characters.
     // Borrowed from racingmars/go3270
     //
-    // C#-ification and further changes are Copyright 20200 by Robert J. Lawrence (roblthegreat)
+    // C#-ification and further changes are Copyright 2022 by Robert J. Lawrence (roblthegreat)
     // licened under the MIT license.
     public byte[] BuildField(Field fld)
     {
