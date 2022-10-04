@@ -1,12 +1,12 @@
 ﻿/*
- * This file is part of https://github.com/roblthegreat/TN3270Sharp
+ * This file is part of https://github.com/FuzzyMainframes/TN3270Sharp/TN3270Sharp
  *
  * Portions of this code may have been adapted or originated from another MIT 
  * licensed project and will be explicitly noted in the comments as needed.
  * 
  * MIT License
  * 
- * Copyright (c) 2020, 2021, 2022 by Robert J. Lawrence (roblthegreat) and other
+ * Copyright (c) 2020, 2021, 2022, by Robert J. Lawrence (roblthegreat) and other
  * TN3270Sharp contributors.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,8 +45,8 @@ namespace TN3270Sharp.Example.App
             Console.WriteLine("TN3270Sharp Demo Server started and listening on 0.0.0.0 port 3270");
             Console.WriteLine("Control+C to exit...\n\n");
 
-            var test1 = new Test1();
-            test1.CreateServer();
+            var exampleApp = new Example3270App();
+            exampleApp.CreateServer();
         }
     }
 }

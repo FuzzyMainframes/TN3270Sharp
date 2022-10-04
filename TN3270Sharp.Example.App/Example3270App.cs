@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace TN3270Sharp.Example.App
 {
-    public class Test1
+    public class Example3270App
     {
         private enum ProgramScreen
         {
