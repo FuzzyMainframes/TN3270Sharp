@@ -31,6 +31,7 @@
 
 namespace TN3270Sharp;
 
+// 3270 Control Characters
 public enum ControlChars
 {
     SF = 0x1d,
