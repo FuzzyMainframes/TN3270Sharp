@@ -51,6 +51,9 @@ public class Field
     // password input field).
     public bool Hidden { get; set; }
 
+    // NumericOnly indicates if the client only accepts numeric input.
+    public bool NumericOnly { get; set; }
+
     // Color is the field color. The default value is the default color.
     public Colors Color { get; set; }
 

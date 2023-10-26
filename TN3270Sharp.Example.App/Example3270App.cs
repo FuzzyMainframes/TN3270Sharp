@@ -73,6 +73,7 @@ namespace TN3270Sharp.Example.App
                             var fName = screens[ProgramScreen.FormScreen].GetFieldData("fname");
                             var lName = screens[ProgramScreen.FormScreen].GetFieldData("lname");
                             var password = screens[ProgramScreen.FormScreen].GetFieldData("password");
+                            var employeeId = screens[ProgramScreen.FormScreen].GetFieldData("employeeId");
 
                             // Check for errors...
                             string? errorMessage = null;
@@ -82,8 +83,10 @@ namespace TN3270Sharp.Example.App
                                 errorMessage = "Last Name field is required.";
                             else if (string.IsNullOrWhiteSpace(password))
                                 errorMessage = "Password field is required.";
+                            else if (string.IsNullOrWhiteSpace(employeeId))
+                                errorMessage = "EmployeeId field is required.";
 
-                            if(!string.IsNullOrWhiteSpace(password) && password.Trim().ToUpper() != "ADMIN")
+                            if (!string.IsNullOrWhiteSpace(password) && password.Trim().ToUpper() != "ADMIN")
                                 errorMessage = "Invalid password.";
 
                             if (!string.IsNullOrWhiteSpace(errorMessage))
@@ -109,6 +112,7 @@ namespace TN3270Sharp.Example.App
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("fname");
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("lname");
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("password");
+                                    screens[ProgramScreen.FormScreen].ClearFieldValue("employeeId");
                                     screens[ProgramScreen.FormScreen].ClearFieldValue("errormsg");
                                 },
                                 formScreenAction);
@@ -160,6 +164,9 @@ namespace TN3270Sharp.Example.App
             FormScreen.AddText(7,1,"Password  . . . .");
             FormScreen.AddInput(7,20,"password", true);
             FormScreen.AddEOF(7, 41);
+            FormScreen.AddText(8, 1, "Employee ID . .");
+            FormScreen.AddInput(8, 20, "employeeId", numericonly: true);
+            FormScreen.AddEOF(8, 41);
             FormScreen.AddText(9,1,"Press");
             FormScreen.AddText(9,7,"ENTER", true);
             FormScreen.AddText(9,13,"to submit your name.");

@@ -95,8 +95,9 @@ public class Screen
     /// <param name="hidden">text is hidden (i.e., password)</param>
     /// <param name="write">is input field writable (true/false)</param>
     /// <param name="underscore">should the input field be underscored (true/false)</param>
+    /// <param name="numericonly">allows only numeric input</param>
     /// <returns></returns>
-        public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true)
+        public void AddInput(int row, int column, string name, bool hidden = false, bool write = true, bool underscore = true, bool numericonly = false)
         => Fields.Add(new Field
         {
             Column = column,
@@ -107,6 +108,7 @@ public class Screen
             ? Highlight.Underscore
             : Highlight.DefaultHighlight,
             Hidden = hidden,
+            NumericOnly = numericonly,
         });
 
     /// <summary>
@@ -120,11 +122,12 @@ public class Screen
     /// <param name="hidden">text is hidden (i.e., password)</param>
     /// <param name="write">is input field writable (true/false)</param>
     /// <param name="underscore">should the input field be underscored (true/false)</param>
+    /// <param name="numericonly">allows only numeric input</param>
     /// <returns></returns>
     public void AddInput(int row, int column, int length, string name, bool hidden = false, bool write = true,
-        bool underscore = true)
+        bool underscore = true, bool numericonly = false)
     {
-        AddInput(row, column, name, hidden, write, underscore);
+        AddInput(row, column, name, hidden, write, underscore, numericonly);
         AddEOF(row, column + length + 1);
     }
 
@@ -157,6 +160,7 @@ public class Screen
             buffer.Add((byte)ControlChars.SF);
             buffer.Add((byte)(
                 (fld.Write ? AttribChar.Unprotected : AttribChar.Protected) |
+                (fld.NumericOnly ? AttribChar.Numeric : AttribChar.Alpha) |
                 (fld.Intensity ? AttribChar.Intensity : AttribChar.Normal) |
                 (fld.Hidden ? AttribChar.Hidden : AttribChar.Normal)
                 ));
@@ -179,6 +183,7 @@ public class Screen
         buffer.Add(0xc0);
         buffer.Add((byte)(
             (fld.Write ? AttribChar.Unprotected : AttribChar.Protected) |
+            (fld.NumericOnly ? AttribChar.Numeric : AttribChar.Alpha) |
             (fld.Intensity ? AttribChar.Intensity : AttribChar.Normal) |
             (fld.Hidden ? AttribChar.Hidden : AttribChar.Normal)
             ));
